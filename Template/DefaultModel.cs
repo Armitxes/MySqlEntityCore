@@ -16,7 +16,7 @@ namespace MySqlEntityCore.Template {
         /// <param name="id"></param>
         public DefaultModel(uint id) {
             this.ConstructFromDictionary(
-                new SqlQuery($"SELECT {this.Instance.SqlFieldList} FROM {this.Instance.Table} WHERE id={id};").Result.FirstOrDefault()
+                new Connection().Query($"SELECT {this.Instance.SqlFieldList} FROM {this.Instance.Table} WHERE id={id};").FirstOrDefault()
             );
         }
 
@@ -29,20 +29,20 @@ namespace MySqlEntityCore.Template {
             List<T> records = new List<T>();
             ModelAttribute tTypeAttr = ModelAttribute.Get(tType);
 
-            SqlQuery query = new SqlQuery(
+            List<Dictionary<string, object>> query = new Connection().Query(
                 $"SELECT {tTypeAttr.SqlFieldList} FROM {tTypeAttr.Table} WHERE id IN ({string.Join(",", ids)});",
                 true
             );
             ConstructorInfo ctor = tType.GetConstructor(System.Type.EmptyTypes);
             if (
                 ctor == null
-                || query.Result.Count == 0
+                || query.Count == 0
             )
                 return records;
 
-            MethodInfo construct = tType.GetMethod("ConstructFromDictionary", new[] { query.Result[0].GetType() });
+            MethodInfo construct = tType.GetMethod("ConstructFromDictionary", new[] { query[0].GetType() });
 
-            foreach (Dictionary<string, object> entry in query.Result)
+            foreach (Dictionary<string, object> entry in query)
             {
                 object objRecord = ctor.Invoke(System.Type.EmptyTypes);
                 construct.Invoke(objRecord, new object[] { entry });
@@ -79,10 +79,10 @@ namespace MySqlEntityCore.Template {
                 fieldValues = fieldValues[..^1];
 
             this.ConstructFromDictionary(
-                new SqlQuery(
+                new Connection().Query(
                     $"INSERT INTO {this.Instance.Table} ({fieldNames}) VALUES ({fieldValues}); SELECT LAST_INSERT_ID();",
                     true
-                ).Result.FirstOrDefault()
+                ).FirstOrDefault()
             );
         }
 
@@ -109,13 +109,13 @@ namespace MySqlEntityCore.Template {
             if (!changes)
                 return;
             sql += $" WHERE id={this.Id};";
-            new SqlQuery(sql);
+            new Connection().NonQuery(sql);
         }
 
         /// <summary>Delete current record from the database.</summary>
         public void Delete()
         {
-            new SqlQuery($"DELETE FROM {Instance.Table} WHERE id={this.Id};");
+            new Connection().NonQuery($"DELETE FROM {Instance.Table} WHERE id={this.Id};");
         }
     }
 }

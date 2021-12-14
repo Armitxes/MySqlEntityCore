@@ -57,23 +57,23 @@ namespace MySqlEntityCore {
         ///<summary>Return DB information about the current model.</summary>
         internal List<Dictionary<string, object>> DbTableInfo()
         {
-            return new SqlQuery(
+            return new Connection().Query(
                 "SELECT column_name, data_type, is_nullable, column_key, column_type, numeric_precision, CHARACTER_MAXIMUM_LENGTH, EXTRA " +
                 "FROM information_schema.columns " +
-                $"WHERE table_schema='{Connection.Default.Stream.Database}' AND table_name='{Table}';",
+                $"WHERE table_schema='{Connection.DefaultPool.Database}' AND table_name='{Table}';",
                 true
-            ).Result;
+            );
         }
 
         ///<summary>Return constraints of the current model.</summary>
         internal List<Dictionary<string, object>> DbTableConstraints()
         {
-            return new SqlQuery(
+            return new Connection().Query(
                 "SELECT COLUMN_NAME, CONSTRAINT_NAME, REFERENCED_COLUMN_NAME, REFERENCED_TABLE_NAME " +
                 "FROM information_schema.KEY_COLUMN_USAGE " +
-                $"WHERE table_schema='{Connection.Default.Stream.Database}' AND table_name='{Table}';",
+                $"WHERE table_schema='{Connection.DefaultPool.Database}' AND table_name='{Table}';",
                 true
-            ).Result;
+            );
         }
 
         internal Dictionary<string, object> DbFieldInfo(string fieldName)
@@ -93,7 +93,7 @@ namespace MySqlEntityCore {
             foreach (FieldAttribute field in Fields)
                 sql += field.SqlCreate() + ",";
             sql = sql[..^1] + ") ENGINE=INNODB;";
-            new SqlQuery(sql);
+            new Connection().NonQuery(sql);
         }
 
         ///<summary>Matches the existing table to the model.</summary>
@@ -107,7 +107,7 @@ namespace MySqlEntityCore {
             foreach (FieldAttribute field in Fields)
                 sql += field.SqlAlter(this);
             if (sql != "")
-                new SqlQuery(sql);
+                new Connection().NonQuery(sql);
             if (dropColumns)
                 CleanupColumns();
             UpdateConstraints();
@@ -147,7 +147,7 @@ namespace MySqlEntityCore {
             }
 
             if (sql != "")
-                new SqlQuery(sql);
+                new Connection().NonQuery(sql);
         }
 
         private void CleanupColumns()
@@ -161,7 +161,7 @@ namespace MySqlEntityCore {
             }
             if (sql == "")
                 return;
-            new SqlQuery($"ALTER TABLE {this.Table} " + sql[..^1] + ";");
+            new Connection().NonQuery($"ALTER TABLE {this.Table} " + sql[..^1] + ";");
         }
     }
 }
