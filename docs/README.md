@@ -3,7 +3,6 @@
 # Development Documentation
 
 * [Connect to MySQL](connection.md)
-* [Choose a Database](database.md)
 * Actions
   * [Data Definition](actions/data-definition.md)
   * [Data Query](actions/data-query.md)
