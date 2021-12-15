@@ -5,24 +5,22 @@ using System.Reflection;
 
 namespace MySqlEntityCore {
 	class Init {
+        ///<summary>If true: drop columns not present as model field.</summary>
+        public bool DropColumns { get; set; } = false;
 		internal static List<Type> ModelClasses { get; set; } = new List<Type>();
 
+        ///<summary>Sync models and fields to the database.</summary>
 		public Init()
 		{
-			Models();
+			InitModels();
 		}
 
-		public void Models()
-		{
-			LoadModels();
-			ModelClasses.ForEach(t => ModelAttribute.Get(t).UpdateTable(dropColumns: true));
-		}
-
-		internal void LoadModels()
+		internal void InitModels()
 		{
 			Assembly[] assemblies = AppDomain.CurrentDomain.GetAssemblies();
 			IEnumerable<Type> classes = assemblies.SelectMany(t => t.GetTypes()).Where(t => t.IsClass);
 			ModelClasses = classes.Where(t => t.GetCustomAttribute<ModelAttribute>() != null).ToList();
+            ModelClasses.ForEach(t => ModelAttribute.Get(t).UpdateTable(dropColumns: DropColumns));
 		}
 	}
 }
