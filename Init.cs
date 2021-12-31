@@ -21,6 +21,9 @@ namespace MySqlEntityCore {
 			IEnumerable<Type> classes = assemblies.SelectMany(t => t.GetTypes()).Where(t => t.IsClass);
 			ModelClasses = classes.Where(t => t.GetCustomAttribute<ModelAttribute>() != null).ToList();
             ModelClasses.ForEach(t => ModelAttribute.Get(t).UpdateTable(dropColumns: DropColumns));
+            
+            // All tables are created and updated at this point. Now we can handle foreign keys
+            ModelClasses.ForEach(t => ModelAttribute.Get(t).UpdateConstraints());
 		}
 	}
 }

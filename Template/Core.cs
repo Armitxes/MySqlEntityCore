@@ -47,9 +47,15 @@ namespace MySqlEntityCore.Template {
                 else if (property.PropertyType == typeof(string))
                     value = strValue;
                 else if (property.PropertyType == typeof(uint))
-                    value = Convert.ToUInt32(value);  // PSQL doesn't support unsigned types
+                    value = Convert.ToUInt32(value);
                 else if (property.PropertyType == typeof(DateTime))
                     value = DateTime.Parse(strValue);
+                else if (property.PropertyType.IsSubclassOf(typeof(Template.DefaultModel))) {
+                    // We get uint value for class relation fields.
+                    // For performance reasons we only provide the related ID to the instance - additionaly data is only loaded when accessed.
+                    value = property.PropertyType.GetConstructor(System.Type.EmptyTypes).Invoke(System.Type.EmptyTypes);
+                    property.PropertyType.GetProperty("Id").SetValue(value, strValue);
+                }
                 property.SetValue(this, value);
             }
             this.Origin = this.MemberwiseClone();

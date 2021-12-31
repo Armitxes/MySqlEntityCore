@@ -8,19 +8,38 @@ namespace MySqlEntityCore.Template {
     class DefaultModel : Template.Core {
 
         [Field(PrimaryKey = true, AutoIncrement = true)]
-        public uint Id { get; set; }
+        public uint Id { get; internal set; }
+
+        private bool FullyQueried { get; set; } = false;
 
         public DefaultModel() { }
 
         /// <summary>Get the record with the corresponding id.</summary>
         /// <param name="id"></param>
         public DefaultModel(uint id) {
-            this.ConstructFromDictionary(
-                new Connection().Query($"SELECT {this.Instance.SqlFieldList} FROM {this.Instance.Table} WHERE id={id};").FirstOrDefault()
-            );
+            this.Id = id;
+            Load();
         }
 
-        /// <summary>Get a list of records with the corresponding ids.</summary>
+        /// <summary>
+        /// Load all Id related information from DB. Can only happen once.
+        /// Useful for performant use of related fields.
+        /// </summary>
+        public void Load() {
+            if (FullyQueried)
+                return;
+            Refresh();
+        }
+
+        /// <summary>Reload the record from DB.</summary>
+        public void Refresh() {
+            this.ConstructFromDictionary(
+                new Connection().Query($"SELECT {this.Instance.SqlFieldList} FROM {this.Instance.Table} WHERE id={this.Id};").FirstOrDefault()
+            );
+            FullyQueried = true;
+        }
+
+        /// <summary>Get a list of fully loaded records with the corresponding ids.</summary>
         /// <param name="ids"></param>
         /// <returns></returns>
         public static List<T> Browse<T>(int[] ids)

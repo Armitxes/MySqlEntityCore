@@ -110,10 +110,9 @@ namespace MySqlEntityCore {
                 new Connection().NonQuery(sql);
             if (dropColumns)
                 CleanupColumns();
-            UpdateConstraints();
         }
 
-        private void UpdateConstraints() {
+        internal void UpdateConstraints() {
             string sql = "";
             List<Dictionary<string, object>> dbConstraints = DbTableConstraints();
             IEnumerable<FieldAttribute> modelConstraints = Fields.Where(q => q.IsModelClass);
