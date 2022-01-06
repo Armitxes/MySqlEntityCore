@@ -54,7 +54,7 @@ namespace MySqlEntityCore.Template {
                     // We get uint value for class relation fields.
                     // For performance reasons we only provide the related ID to the instance - additionaly data is only loaded when accessed.
                     value = property.PropertyType.GetConstructor(System.Type.EmptyTypes).Invoke(System.Type.EmptyTypes);
-                    property.PropertyType.GetProperty("Id").SetValue(value, strValue);
+                    property.PropertyType.GetProperty("Id").SetValue(value, Convert.ToUInt32(strValue));
                 }
                 property.SetValue(this, value);
             }
