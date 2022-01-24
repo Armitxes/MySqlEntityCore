@@ -1,6 +1,6 @@
 # This is a basic workflow to help you get started with Actions
 
-name: CI
+name: NuGet Package
 
 # Controls when the workflow will run
 on:
@@ -33,9 +33,7 @@ jobs:
           NUGET_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}        
           
       - name: Build solution and generate NuGet package
-        run: |  
-          cd MySqlEntityCore
-          dotnet pack -c Release -o out  
+        run: dotnet pack -c Release -o package  
 
       - name: Push generated package to GitHub registry
-        run: dotnet nuget push ./MySqlEntityCore/out/*.nupkg --skip-duplicate --no-symbols true
+        run: dotnet nuget push ./package/*.nupkg --skip-duplicate --no-symbols true
