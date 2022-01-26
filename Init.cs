@@ -4,7 +4,7 @@ using System.Linq;
 using System.Reflection;
 
 namespace MySqlEntityCore {
-	class Init {
+	public class Init {
         ///<summary>If true: drop columns not present as model field.</summary>
         public bool DropColumns { get; set; } = false;
 		internal static List<Type> ModelClasses { get; set; } = new List<Type>();
