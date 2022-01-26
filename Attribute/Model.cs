@@ -6,7 +6,7 @@ using System.Reflection;
 namespace MySqlEntityCore {
 
     [AttributeUsage(AttributeTargets.Class)]
-    class ModelAttribute : Attribute {
+    public class ModelAttribute : Attribute {
         // Do not use constructors as they execute with every GetCustomAttributes call
         public string Table { get; set; }
         public string OrderBy { get; set; }

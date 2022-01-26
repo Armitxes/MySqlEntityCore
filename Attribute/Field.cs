@@ -6,7 +6,7 @@ using System.Reflection;
 namespace MySqlEntityCore {
 
 	[AttributeUsage(AttributeTargets.Property | AttributeTargets.Field)]
-	class FieldAttribute : Attribute {
+	public class FieldAttribute : Attribute {
         public string Column { get; set; }
         public string Name { get; private set; }
         public uint Size { get; set; }

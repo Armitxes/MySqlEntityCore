@@ -5,7 +5,7 @@ using System.Linq;
 namespace MySqlEntityCore.Template {
 
     /// <summary>Create a model with an unsigned Id as primary key.</summary>
-    class DefaultModel : Template.Core {
+    public class DefaultModel : Template.Core {
 
         [Field(PrimaryKey = true, AutoIncrement = true)]
         public uint Id { get; internal set; }

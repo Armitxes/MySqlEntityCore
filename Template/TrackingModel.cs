@@ -4,7 +4,7 @@ namespace MySqlEntityCore.Template {
 
 
 	/// <summary>Track latest create &amp; write date.</summary>
-	class TrackingModel : Template.DefaultModel {
+	public class TrackingModel : Template.DefaultModel {
 
 		[Field(Required=true, Writeable=false)]
 		public DateTime CreateDate { get; set; }

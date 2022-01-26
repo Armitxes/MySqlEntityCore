@@ -6,7 +6,7 @@ namespace MySqlEntityCore.Template {
 	/// <summary>
 	/// Core functionality for all models.
 	/// </summary>
-	class Core {
+	public class Core {
 		internal object Origin { get; set; }
 
         private Type _ChildType;

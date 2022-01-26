@@ -2,7 +2,7 @@
 using MySql.Data.MySqlClient;
 
 namespace MySqlEntityCore {
-    class Connection {
+    public class Connection {
         public static ConnectionData DefaultPool { get; private set; }
 
         private static List<string> DBs { get; set; }

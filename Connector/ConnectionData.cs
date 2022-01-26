@@ -1,7 +1,7 @@
 using System;
 
 namespace MySqlEntityCore {
-	internal class ConnectionData {
+	public class ConnectionData {
         public string Host { get; set; }
 		public string User { get; set; }
         public string Port { get; set; }
