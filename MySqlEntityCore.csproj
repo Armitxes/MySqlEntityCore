@@ -1,8 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <OutputType>Exe</OutputType>
+    <OutputType>Library</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageId>MySqlEntityCore</PackageId>
+    <Title>MySQL Entity Core</Title>
+    <Description>Intuitive framework to quickly convert your C# models into MySQL database tables.</Description>
+    <Version>0.1.0</Version>
+    <Authors>Armitxes (Jan Brodersen)</Authors>
+    <Copyright>Copyright © 2022 Armitxes (Jan Brodersen)</Copyright>
+    <RepositoryUrl>https://github.com/Armitxes/MySqlEntityCore</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>
