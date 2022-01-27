@@ -77,7 +77,7 @@ namespace MySqlEntityCore {
 		internal string SqlCreate()
 		{
 			string[] strings = new string[] {
-				Column, SqlType(), SqlAutoIncrement(), SqlRequired(), SqlUnique(), SqlPrimaryKey()
+				"`"+Column+"`", SqlType(), SqlAutoIncrement(), SqlRequired(), SqlUnique(), SqlPrimaryKey()
 			};
 			return string.Join(" ", strings.Where(str => str != ""));
 		}
@@ -92,7 +92,7 @@ namespace MySqlEntityCore {
         private string SqlAlterAddColumn()
         {
             string[] strings = new string[] {
-                Column, SqlType(), SqlAutoIncrement(), SqlRequired(), SqlUnique(), SqlPrimaryKey()
+                "`"+Column+"`", SqlType(), SqlAutoIncrement(), SqlRequired(), SqlUnique(), SqlPrimaryKey()
             };
             return $"ALTER TABLE {Model.Table} ADD COLUMN " + string.Join(" ", strings.Where(str => str != "")) + "; ";
         }
@@ -106,7 +106,7 @@ namespace MySqlEntityCore {
 				|| Size.ToString() != fieldInfo["CHARACTER_MAXIMUM_LENGTH"].ToString()
 				|| AutoIncrement != tblAutoIncrement
 			)
-				return $"ALTER TABLE {Model.Table} MODIFY {Column} {SqlType()} {SqlAutoIncrement()} {SqlRequired()}; ";
+				return $"ALTER TABLE {Model.Table} MODIFY `{Column}` {SqlType()} {SqlAutoIncrement()} {SqlRequired()}; ";
 			return "";
 		}
 

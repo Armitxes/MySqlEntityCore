@@ -5,11 +5,22 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "Debug Console",
             "type": "coreclr",
             "request": "launch",
-            "preLaunchTask": "build",
+            "preLaunchTask": "debug",
             "program": "${workspaceFolder}/bin/Debug/netcoreapp3.1/MySqlEntityCore.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}",
+            "console": "internalConsole",
+            "stopAtEntry": false
+        },
+        {
+            "name": "Release Library",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "release",
+            "program": "${workspaceFolder}/bin/Release/netcoreapp3.1/MySqlEntityCore.dll",
             "args": [],
             "cwd": "${workspaceFolder}",
             "console": "internalConsole",

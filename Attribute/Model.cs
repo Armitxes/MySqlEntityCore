@@ -29,7 +29,7 @@ namespace MySqlEntityCore {
                 {
                     FieldAttribute field = FieldAttribute.Get(property);
                     if (field != null)
-                        _Fields.Add(field);
+                        _Fields.Insert(0, field);
                 }
                 return _Fields;
             }
@@ -156,7 +156,7 @@ namespace MySqlEntityCore {
                 string column = (x["COLUMN_NAME"] as string);
                 FieldAttribute field = Fields.Where(q => q.Column == column).FirstOrDefault();
                 if (field == null)
-                    sql += $"DROP COLUMN {column},";
+                    sql += $"DROP COLUMN `{column}`,";
             }
             if (sql == "")
                 return;
