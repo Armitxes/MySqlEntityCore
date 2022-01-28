@@ -94,7 +94,7 @@ namespace MySqlEntityCore {
             string[] strings = new string[] {
                 "`"+Column+"`", SqlType(), SqlAutoIncrement(), SqlRequired(), SqlUnique(), SqlPrimaryKey()
             };
-            return $"ALTER TABLE {Model.Table} ADD COLUMN " + string.Join(" ", strings.Where(str => str != "")) + "; ";
+            return $"ALTER TABLE `{Model.Table}` ADD COLUMN " + string.Join(" ", strings.Where(str => str != "")) + "; ";
         }
 
 		private string SqlAlterModify(Dictionary<string, object> fieldInfo)
@@ -106,7 +106,7 @@ namespace MySqlEntityCore {
 				|| Size.ToString() != fieldInfo["CHARACTER_MAXIMUM_LENGTH"].ToString()
 				|| AutoIncrement != tblAutoIncrement
 			)
-				return $"ALTER TABLE {Model.Table} MODIFY `{Column}` {SqlType()} {SqlAutoIncrement()} {SqlRequired()}; ";
+				return $"ALTER TABLE `{Model.Table}` MODIFY `{Column}` {SqlType()} {SqlAutoIncrement()} {SqlRequired()}; ";
 			return "";
 		}
 

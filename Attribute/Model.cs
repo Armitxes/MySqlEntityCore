@@ -89,7 +89,7 @@ namespace MySqlEntityCore {
             if (Connection.Tables().Contains(this.Table))
                 return;
 
-            string sql = $"CREATE TABLE IF NOT EXISTS {this.Table} (";
+            string sql = $"CREATE TABLE IF NOT EXISTS `{this.Table}` (";
             foreach (FieldAttribute field in Fields)
                 sql += field.SqlCreate() + ",";
             sql = sql[..^1] + ") ENGINE=INNODB;";
@@ -126,7 +126,7 @@ namespace MySqlEntityCore {
    
                 FieldAttribute field = modelConstraints.Where(q => q.Column == column).FirstOrDefault();
                 if (field == null)
-                    sql += $"ALTER TABLE {this.Table} DROP FOREIGN KEY {cName}; ";
+                    sql += $"ALTER TABLE `{this.Table}` DROP FOREIGN KEY {cName}; ";
             }
 
             // Sync and add missing constrains
@@ -136,7 +136,7 @@ namespace MySqlEntityCore {
                     // Create Relation
                     ModelAttribute refModel = ModelAttribute.Get(modelConstraint.PropInfo.PropertyType);
                     sql += (
-                        $"ALTER TABLE {this.Table} ADD CONSTRAINT " +
+                        $"ALTER TABLE `{this.Table}` ADD CONSTRAINT " +
                         $"`FK_{modelConstraint.Column}_x_{refModel.Table}` FOREIGN KEY (`{modelConstraint.Column}`) " +
                         $"REFERENCES `{refModel.Table}` (`Id`); "
                     );
@@ -160,7 +160,7 @@ namespace MySqlEntityCore {
             }
             if (sql == "")
                 return;
-            new Connection().NonQuery($"ALTER TABLE {this.Table} " + sql[..^1] + ";");
+            new Connection().NonQuery($"ALTER TABLE `{this.Table}` " + sql[..^1] + ";");
         }
     }
 }
