@@ -134,12 +134,11 @@ namespace MySqlEntityCore {
                 string rTable = (dC["REFERENCED_TABLE_NAME"] as string);
                 string rColumn = (dC["REFERENCED_COLUMN_NAME"] as string);
                 FieldAttribute field = modelConstraints.Where(q => q.Column == column).FirstOrDefault();
-                ModelAttribute refModel = ModelAttribute.Get(field.PropInfo.PropertyType);
 
                 if (
                     field == null
                     || rColumn == ""
-                    || refModel.Table != rTable
+                    || Table != rTable
                 )
                     sql.Add($"DROP FOREIGN KEY {cName}");
                 else
@@ -160,7 +159,6 @@ namespace MySqlEntityCore {
                     $"`FK_{mC.Column}_x_{refModel.Table}` FOREIGN KEY (`{mC.Column}`) " +
                     $"REFERENCES `{refModel.Table}` (`Id`)"
                 );
-
             }
 
             if (sql.Count() > 0)
