@@ -69,9 +69,10 @@ namespace MySqlEntityCore {
         internal List<Dictionary<string, object>> DbTableConstraints()
         {
             return new Connection().Query(
-                "SELECT COLUMN_NAME, CONSTRAINT_NAME, REFERENCED_COLUMN_NAME, REFERENCED_TABLE_NAME " +
-                "FROM information_schema.KEY_COLUMN_USAGE " +
-                $"WHERE table_schema='{Connection.DefaultPool.Database}' AND table_name='{Table}';",
+                "SELECT kcu.`CONSTRAINT_NAME`, kcu.`COLUMN_NAME`, tc.`CONSTRAINT_TYPE`, kcu.`REFERENCED_COLUMN_NAME`, kcu.`REFERENCED_TABLE_NAME` " +
+                "FROM information_schema.KEY_COLUMN_USAGE AS kcu " +
+                "LEFT JOIN information_schema.table_constraints AS tc ON tc.`CONSTRAINT_SCHEMA`=kcu.table_schema AND tc.`table_name`=kcu.`table_name` AND tc.`CONSTRAINT_NAME`=kcu.`CONSTRAINT_NAME` " +
+                $"WHERE kcu.`table_schema`='{Connection.DefaultPool.Database}' AND kcu.`table_name`='{Table}';",
                 true
             );
         }
@@ -113,40 +114,98 @@ namespace MySqlEntityCore {
         }
 
         internal void UpdateConstraints() {
-            string sql = "";
-            List<Dictionary<string, object>> dbConstraints = DbTableConstraints();
+            UpdatePrimaryKeys();
+            UpdateForeignKeys();
+        }
+
+        internal void UpdateForeignKeys() {
+            List<string> sql = new List<string>();
+            List<string> cNames = new List<string>();
             IEnumerable<FieldAttribute> modelConstraints = Fields.Where(q => q.IsModelClass);
-
-            // Remove deprecated constraints
-            foreach (Dictionary<string, object> dbConstraint in dbConstraints) {
-                string column = (dbConstraint["COLUMN_NAME"] as string);
-                string cName = (dbConstraint["CONSTRAINT_NAME"] as string);
-                if (cName == "PRIMARY" || cName == column)
-                    continue;  // Handled by SqlAlter
-   
-                FieldAttribute field = modelConstraints.Where(q => q.Column == column).FirstOrDefault();
-                if (field == null)
-                    sql += $"ALTER TABLE `{this.Table}` DROP FOREIGN KEY {cName}; ";
-            }
-
-            // Sync and add missing constrains
-            foreach (FieldAttribute modelConstraint in modelConstraints) {
-                Dictionary<string, object> dbConstraint = dbConstraints.Where(x => (x["COLUMN_NAME"] as string) == modelConstraint.Column).FirstOrDefault();
-                if (dbConstraint == null) {
-                    // Create Relation
-                    ModelAttribute refModel = ModelAttribute.Get(modelConstraint.PropInfo.PropertyType);
-                    sql += (
-                        $"ALTER TABLE `{this.Table}` ADD CONSTRAINT " +
-                        $"`FK_{modelConstraint.Column}_x_{refModel.Table}` FOREIGN KEY (`{modelConstraint.Column}`) " +
-                        $"REFERENCES `{refModel.Table}` (`Id`); "
-                    );
+            List<Dictionary<string, object>> dbConstraints = DbTableConstraints();
+            
+            foreach (Dictionary<string, object> dC in dbConstraints) {
+                string cType = (dC["CONSTRAINT_TYPE"] as string);
+                if (cType != "FOREIGN KEY")
                     continue;
-                }
-                // Sync Relation
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+                string cName = (dC["CONSTRAINT_NAME"] as string);
+                string column = (dC["COLUMN_NAME"] as string);
+                string rTable = (dC["REFERENCED_TABLE_NAME"] as string);
+                string rColumn = (dC["REFERENCED_COLUMN_NAME"] as string);
+                FieldAttribute field = modelConstraints.Where(q => q.Column == column).FirstOrDefault();
+                ModelAttribute refModel = ModelAttribute.Get(field.PropInfo.PropertyType);
+
+                if (
+                    field == null
+                    || rColumn == ""
+                    || refModel.Table != rTable
+                )
+                    sql.Add($"DROP FOREIGN KEY {cName}");
+                else
+                    cNames.Add(cName);
             }
 
-            if (sql != "")
-                new Connection().NonQuery(sql);
+            foreach (FieldAttribute mC in modelConstraints) {
+                if (cNames.Contains(mC.Column))
+                    continue;
+
+                ModelAttribute refModel = ModelAttribute.Get(mC.PropInfo.PropertyType);
+
+                sql.Add(
+                    "ADD CONSTRAINT " +
+                    $"`FK_{mC.Column}_x_{refModel.Table}` FOREIGN KEY (`{mC.Column}`) " +
+                    $"REFERENCES `{refModel.Table}` (`Id`)"
+                );
+
+            }
+
+            if (sql.Count() > 0)
+                new Connection().NonQuery($"ALTER TABLE `{this.Table}` {string.Join(',', sql)};"); 
+        }
+
+        ///<summary>Update mismatching primary keys</summary>
+        internal void UpdatePrimaryKeys() {
+            List<string> sql = new List<string>();
+            List<string> primaryFields = new List<string>();
+
+            // Get all primary key fields from model
+            foreach(FieldAttribute field in Fields) {
+                if (!field.PrimaryKey)
+                    continue;
+                primaryFields.Add("`"+field.Column+"`");
+                sql.Add(field.SqlDropAutoIncrement(sqlShort: true));
+            }
+
+            // Get all PK constraints from database
+            List<Dictionary<string, object>> primaryConstraints = DbTableConstraints().Where(
+                q => (q["CONSTRAINT_TYPE"] as string) == "PRIMARY KEY"
+            ).ToList();
+            
+            // Check for mismatches between model and table
+            bool validPKs = primaryConstraints.Count() == primaryFields.Count();
+            foreach (Dictionary<string, object> primaryConstraint in primaryConstraints) {
+                string column = (primaryConstraint["COLUMN_NAME"] as string);
+                FieldAttribute field = Fields.Where(x => x.Column == column).FirstOrDefault();
+
+                if (field == null || !field.PrimaryKey) {
+                    validPKs = false;
+                    if (field == null)
+                        sql.Add($"DROP COLUMN `{column}`");
+                    else {
+                        sql.Add(field.SqlDropAutoIncrement(sqlShort: true));
+                        sql.Add(field.SqlAlterModify(sqlShort: true));
+                    }
+                }
+            }
+
+            if (validPKs)
+                return;
+            if (primaryConstraints.Count() > 0)
+                sql.Add("DROP PRIMARY KEY");
+            if (primaryFields.Count() > 0)
+                sql.Add($"ADD PRIMARY KEY ({string.Join(',', primaryFields)})");
+            new Connection().NonQuery($"ALTER TABLE `{this.Table}` {string.Join(',', sql)};"); 
         }
 
         private void CleanupColumns()

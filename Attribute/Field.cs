@@ -77,7 +77,7 @@ namespace MySqlEntityCore {
 		internal string SqlCreate()
 		{
 			string[] strings = new string[] {
-				"`"+Column+"`", SqlType(), SqlAutoIncrement(), SqlRequired(), SqlUnique(), SqlPrimaryKey()
+				"`"+Column+"`", SqlType(), SqlAutoIncrement(), SqlRequired(), SqlUnique()
 			};
 			return string.Join(" ", strings.Where(str => str != ""));
 		}
@@ -86,19 +86,9 @@ namespace MySqlEntityCore {
         {
             Model = model;
             Dictionary<string, object> fieldInfo = model.DbFieldInfo(Column);
-            return fieldInfo == null ? SqlAlterAddColumn() : SqlAlterModify(fieldInfo);
-        }
-
-        private string SqlAlterAddColumn()
-        {
-            string[] strings = new string[] {
-                "`"+Column+"`", SqlType(), SqlAutoIncrement(), SqlRequired(), SqlUnique(), SqlPrimaryKey()
-            };
-            return $"ALTER TABLE `{Model.Table}` ADD COLUMN " + string.Join(" ", strings.Where(str => str != "")) + "; ";
-        }
-
-		private string SqlAlterModify(Dictionary<string, object> fieldInfo)
-		{
+            if (fieldInfo == null)
+                return SqlAlterAddColumn();
+            
 			bool tblRequired = fieldInfo["IS_NULLABLE"].ToString() == "NO";
 			bool tblAutoIncrement = fieldInfo["EXTRA"].ToString().Contains("auto_increment");
 			if (
@@ -106,9 +96,33 @@ namespace MySqlEntityCore {
 				|| Size.ToString() != fieldInfo["CHARACTER_MAXIMUM_LENGTH"].ToString()
 				|| AutoIncrement != tblAutoIncrement
 			)
-				return $"ALTER TABLE `{Model.Table}` MODIFY `{Column}` {SqlType()} {SqlAutoIncrement()} {SqlRequired()}; ";
+				return SqlAlterModify() + "; ";
 			return "";
-		}
+        }
+
+        private string SqlAlterAddColumn()
+        {
+            string[] strings = new string[] {
+                "`"+Column+"`", SqlType(), SqlAutoIncrement(), SqlRequired(), SqlUnique()
+            };
+            return $"ALTER TABLE `{Model.Table}` ADD COLUMN " + string.Join(" ", strings.Where(str => str != "")) + "; ";
+        }
+
+        ///<summary>Return the required sql to modify the current model field</summary>
+        public string SqlAlterModify(bool sqlShort=false)
+        {
+            if (sqlShort)
+                return $"MODIFY `{Column}` {SqlType()} {SqlAutoIncrement()} {SqlRequired()}";
+            return $"ALTER TABLE `{Model.Table}` MODIFY `{Column}` {SqlType()} {SqlAutoIncrement()} {SqlRequired()}";
+        }
+
+        ///<summary>Return the required SQL to drop auto increment</summary>
+        public string SqlDropAutoIncrement(bool sqlShort=false)
+        {
+            if (sqlShort)
+                return $"MODIFY `{Column}` {SqlType()} {SqlRequired()}";
+            return $"ALTER TABLE `{Model.Table}` MODIFY `{Column}` {SqlType()} {SqlRequired()}";
+        }
 
 		///<summary>Return MySQL compatible data type for a C# data type.</summary>
 		public string SqlType()
@@ -140,10 +154,8 @@ namespace MySqlEntityCore {
 
 		public string SqlAutoIncrement() => AutoIncrement ? "AUTO_INCREMENT" : "";
 
-		public string SqlRequired() => Required || PrimaryKey ? "NOT NULL" : "NULL";
+		public string SqlRequired() => Required ? "NOT NULL" : "NULL";
 
 		public string SqlUnique() => Unique ? "UNIQUE KEY" : "";
-
-		public string SqlPrimaryKey() => PrimaryKey ? "PRIMARY KEY" : "";
 	}
 }

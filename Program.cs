@@ -6,7 +6,8 @@ namespace MySqlEntityCore {
         public static void Main(string[] args)
         {
             new Connection(
-                user: "web"
+                user: "webserver",
+                password: "vb!Lck3fCRED"
             );
             new Init();
             Console.WriteLine("Done.");

@@ -1,6 +1,4 @@
-using MySqlEntityCore;
-
-namespace Armitxes.Model
+namespace MySqlEntityCore.Test
 {
     [Model]
 	public class Group : MySqlEntityCore.Template.DefaultModel {
