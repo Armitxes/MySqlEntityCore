@@ -146,12 +146,15 @@ namespace MySqlEntityCore {
                     cNames.Add(cName);
             }
 
+            if (sql.Count() > 0)
+                new Connection().NonQuery($"ALTER TABLE `{this.Table}` {string.Join(',', sql)};"); 
+            sql = new List<string>();
+
             foreach (FieldAttribute mC in modelConstraints) {
                 if (cNames.Contains(mC.Column))
                     continue;
 
                 ModelAttribute refModel = ModelAttribute.Get(mC.PropInfo.PropertyType);
-
                 sql.Add(
                     "ADD CONSTRAINT " +
                     $"`FK_{mC.Column}_x_{refModel.Table}` FOREIGN KEY (`{mC.Column}`) " +
