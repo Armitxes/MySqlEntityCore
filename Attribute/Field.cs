@@ -91,13 +91,20 @@ namespace MySqlEntityCore {
             
 			bool tblRequired = fieldInfo["IS_NULLABLE"].ToString() == "NO";
 			bool tblAutoIncrement = fieldInfo["EXTRA"].ToString().Contains("auto_increment");
+            string size = fieldInfo["CHARACTER_MAXIMUM_LENGTH"].ToString();
+            if (size == "")
+                size = "0";
 			if (
-				Required != tblRequired
-				|| Size.ToString() != fieldInfo["CHARACTER_MAXIMUM_LENGTH"].ToString()
-				|| AutoIncrement != tblAutoIncrement
+				Required == tblRequired
+				&& Size.ToString() == size
+				&& AutoIncrement == tblAutoIncrement
 			)
-				return SqlAlterModify() + "; ";
-			return "";
+                return "";
+
+            string sql = SqlAlterModify() + ";";
+            if (this.Column == "Id")
+                sql = "SET FOREIGN_KEY_CHECKS=0; " + sql + " SET FOREIGN_KEY_CHECKS=1;";
+            return sql;
         }
 
         private string SqlAlterAddColumn()
