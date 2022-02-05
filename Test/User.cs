@@ -9,5 +9,8 @@ namespace MySqlEntityCore.Test
         [Field(Size=64)]
 		public string Password { get; set; }
 
+        [Field]
+        public bool Employee { get; set; }
+
 	}
 }

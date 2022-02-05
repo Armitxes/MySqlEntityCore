@@ -154,6 +154,7 @@ namespace MySqlEntityCore {
 				"double" => $"DOUBLE({Size}, {Decimal})",
 				"single" => $"FLOAT({Size}, {Decimal})",
 				"char" => "CHAR(1)",
+                "boolean" => "CHAR(0)",
 				"datetime" => "DATETIME",
 				_ => "",
 			};
