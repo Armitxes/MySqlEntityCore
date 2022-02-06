@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
+
 
 namespace MySqlEntityCore {
 
@@ -49,7 +51,7 @@ namespace MySqlEntityCore {
         internal static ModelAttribute Get(Type type)
         {
             ModelAttribute model = type.GetCustomAttribute<ModelAttribute>();
-            model.Table ??= type.Name;
+            model.Table ??= Regex.Replace(type.Name, @"(?<!_|^)([A-Z])", "_$1").ToLower();
             model.ExternalType = type;
             return model;
         }
@@ -206,7 +208,7 @@ namespace MySqlEntityCore {
                 sql.Add("DROP PRIMARY KEY");
             if (primaryFields.Count() > 0)
                 sql.Add($"ADD PRIMARY KEY ({string.Join(',', primaryFields)})");
-            new Connection().NonQuery($"ALTER TABLE `{this.Table}` {string.Join(',', sql)};"); 
+            new Connection().NonQuery($"SET FOREIGN_KEY_CHECKS=0; ALTER TABLE `{this.Table}` {string.Join(',', sql)}; SET FOREIGN_KEY_CHECKS=1;"); 
         }
 
         private void CleanupColumns()
