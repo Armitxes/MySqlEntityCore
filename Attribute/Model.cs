@@ -158,7 +158,7 @@ namespace MySqlEntityCore {
                 ModelAttribute refModel = ModelAttribute.Get(mC.PropInfo.PropertyType);
                 sql.Add(
                     "ADD CONSTRAINT " +
-                    $"`FK_{mC.Column}_x_{refModel.Table}` FOREIGN KEY (`{mC.Column}`) " +
+                    $"`FK_{Table}__{mC.Column}` FOREIGN KEY (`{mC.Column}`) " +
                     $"REFERENCES `{refModel.Table}` (`Id`)"
                 );
             }
