@@ -24,9 +24,6 @@ namespace MySqlEntityCore {
                 "Missing Default Connection Data.\n" + 
                 "Please call MySqlEntityCore.Connection.SetDefaultPoolingConnection() to define default connection parameters\n" +
                 "Call the alternate MySqlEntityCore.Connection constructor for connections that differ from the default."
-            )
-        {
-
-        }
+            ) { }
     }
 }

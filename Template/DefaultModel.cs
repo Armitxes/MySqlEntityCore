@@ -28,11 +28,11 @@ namespace MySqlEntityCore.Template {
         public void Load() {
             if (FullyQueried)
                 return;
-            Refresh();
+            Reload();
         }
 
-        /// <summary>Reload the record from DB.</summary>
-        public void Refresh() {
+        /// <summary>Reload the record from database.</summary>
+        public void Reload() {
             this.ConstructFromDictionary(
                 new Connection().Query($"SELECT {this.Instance.SqlFieldList} FROM {this.Instance.Table} WHERE id={this.Id};").FirstOrDefault()
             );
@@ -42,7 +42,7 @@ namespace MySqlEntityCore.Template {
         /// <summary>Get a list of fully loaded records with the corresponding ids.</summary>
         /// <param name="ids"></param>
         /// <returns></returns>
-        public static List<T> Browse<T>(int[] ids)
+        public static List<T> Browse<T>(uint[] ids)
         {
             System.Type tType = typeof(T);
             List<T> records = new List<T>();
@@ -52,6 +52,56 @@ namespace MySqlEntityCore.Template {
                 $"SELECT {tTypeAttr.SqlFieldList} FROM {tTypeAttr.Table} WHERE id IN ({string.Join(",", ids)});",
                 true
             );
+            ConstructorInfo ctor = tType.GetConstructor(System.Type.EmptyTypes);
+            if (
+                ctor == null
+                || query.Count == 0
+            )
+                return records;
+
+            MethodInfo construct = tType.GetMethod("ConstructFromDictionary", new[] { query[0].GetType() });
+
+            foreach (Dictionary<string, object> entry in query)
+            {
+                object objRecord = ctor.Invoke(System.Type.EmptyTypes);
+                construct.Invoke(objRecord, new object[] { entry });
+                records.Add((T)System.Convert.ChangeType(objRecord, tType));
+            }
+            return records;
+        }
+
+        /// <summary>Get a list of fully loaded by the given conditions. Leave null/0 for all lines.</summary>
+        /// <param name="where">SQL "WHERE" condition</param>
+        /// <param name="orderby">SQL "ORDER BY" statement</param>
+        /// <param name="offset">Result offset</param>
+        /// <param name="limit">Result limit</param>
+        /// <returns></returns>
+        public static List<T> Get<T>(
+            string where=null,
+            string orderby=null,
+            uint offset=0,
+            uint limit=0
+        ) {
+            System.Type tType = typeof(T);
+            List<T> records = new List<T>();
+            ModelAttribute tTypeAttr = ModelAttribute.Get(tType);
+
+            string sql = $"SELECT {tTypeAttr.SqlFieldList} FROM {tTypeAttr.Table}";
+            if (where != null)
+                sql += $" WHERE {where}";
+            if (orderby != null)
+                sql += $" ORDER BY {orderby}";
+            if (offset > 0 || limit > 0) {
+                sql += $" LIMIT";
+                if (offset > 0 && limit > 0) 
+                    sql += $" {offset},{limit}";
+                else if (limit > 0)
+                    sql += $" {limit}";
+            }
+            sql += ";";
+                
+
+            List<Dictionary<string, object>> query = new Connection().Query(sql, true);
             ConstructorInfo ctor = tType.GetConstructor(System.Type.EmptyTypes);
             if (
                 ctor == null
