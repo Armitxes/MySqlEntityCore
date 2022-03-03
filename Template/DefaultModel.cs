@@ -44,30 +44,9 @@ namespace MySqlEntityCore.Template {
         /// <returns></returns>
         public static List<T> Browse<T>(uint[] ids)
         {
-            System.Type tType = typeof(T);
-            List<T> records = new List<T>();
-            ModelAttribute tTypeAttr = ModelAttribute.Get(tType);
-
-            List<Dictionary<string, object>> query = new Connection().Query(
-                $"SELECT {tTypeAttr.SqlFieldList} FROM {tTypeAttr.Table} WHERE id IN ({string.Join(",", ids)});",
-                true
+            return Get<T>(
+                where: $"`id` IN ({string.Join(",", ids)}"
             );
-            ConstructorInfo ctor = tType.GetConstructor(System.Type.EmptyTypes);
-            if (
-                ctor == null
-                || query.Count == 0
-            )
-                return records;
-
-            MethodInfo construct = tType.GetMethod("ConstructFromDictionary", new[] { query[0].GetType() });
-
-            foreach (Dictionary<string, object> entry in query)
-            {
-                object objRecord = ctor.Invoke(System.Type.EmptyTypes);
-                construct.Invoke(objRecord, new object[] { entry });
-                records.Add((T)System.Convert.ChangeType(objRecord, tType));
-            }
-            return records;
         }
 
         /// <summary>Create a new record in the database.</summary>
