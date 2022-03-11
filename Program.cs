@@ -1,6 +1,7 @@
 using System;
 
-namespace MySqlEntityCore {
+namespace MySqlEntityCore
+{
     public class Program
     {
         public static void Main(string[] args)
@@ -9,7 +10,7 @@ namespace MySqlEntityCore {
                 user: "webserver",
                 password: "vb!Lck3fCRED"
             );
-            new Init();
+            new Init(dropColumn: true);
             Console.WriteLine("Done.");
         }
     }

@@ -5,10 +5,12 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 
 
-namespace MySqlEntityCore {
+namespace MySqlEntityCore
+{
 
     [AttributeUsage(AttributeTargets.Class)]
-    public class ModelAttribute : Attribute {
+    public class ModelAttribute : Attribute
+    {
         // Do not use constructors as they execute with every GetCustomAttributes call
         public string Table { get; set; }
         public string OrderBy { get; set; }
@@ -16,7 +18,8 @@ namespace MySqlEntityCore {
         internal Type ExternalType { get; set; }
 
         private List<FieldAttribute> _Fields { get; set; }
-        public List<FieldAttribute> Fields {
+        public List<FieldAttribute> Fields
+        {
             get
             {
                 if (_Fields != null)
@@ -26,7 +29,7 @@ namespace MySqlEntityCore {
 
                 if (ExternalType == null)
                     return _Fields;
-                
+
                 foreach (PropertyInfo property in ExternalType.GetRuntimeProperties())
                 {
                     FieldAttribute field = FieldAttribute.Get(property);
@@ -37,8 +40,10 @@ namespace MySqlEntityCore {
             }
         }
 
-        internal string SqlFieldList {
-            get {
+        internal string SqlFieldList
+        {
+            get
+            {
                 string result = "";
                 foreach (FieldAttribute field in this.Fields)
                     result += field.Column + ",";
@@ -100,8 +105,8 @@ namespace MySqlEntityCore {
         }
 
         ///<summary>Matches the existing table to the model.</summary>
-        ///<param name="dropColumns">Drop table columns not represented in the model.</param>
-        internal void UpdateTable(bool dropColumns = false)
+        ///<param name="dropColumn">Drop table columns not represented in the model.</param>
+        internal void UpdateTable(bool dropColumn = false)
         {
             if (!Connection.Tables().Contains(this.Table))
                 CreateTable();
@@ -111,26 +116,29 @@ namespace MySqlEntityCore {
                 sql += field.SqlAlter(this);
             if (sql != "")
                 new Connection().NonQuery(sql);
-            if (dropColumns)
+            if (dropColumn)
                 CleanupColumns();
         }
 
-        internal void UpdateConstraints() {
+        internal void UpdateConstraints()
+        {
             UpdatePrimaryKeys();
             UpdateForeignKeys();
         }
 
-        internal void UpdateForeignKeys() {
+        internal void UpdateForeignKeys()
+        {
             List<string> sql = new List<string>();
             List<string> cNames = new List<string>();
             IEnumerable<FieldAttribute> modelConstraints = Fields.Where(q => q.IsModelClass);
             List<Dictionary<string, object>> dbConstraints = DbTableConstraints();
-            
-            foreach (Dictionary<string, object> dC in dbConstraints) {
+
+            foreach (Dictionary<string, object> dC in dbConstraints)
+            {
                 string cType = (dC["CONSTRAINT_TYPE"] as string);
                 if (cType != "FOREIGN KEY")
                     continue;
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       
+
                 string cName = (dC["CONSTRAINT_NAME"] as string);
                 string column = (dC["COLUMN_NAME"] as string);
                 string rTable = (dC["REFERENCED_TABLE_NAME"] as string);
@@ -148,10 +156,11 @@ namespace MySqlEntityCore {
             }
 
             if (sql.Count() > 0)
-                new Connection().NonQuery($"ALTER TABLE `{this.Table}` {string.Join(',', sql)};"); 
+                new Connection().NonQuery($"ALTER TABLE `{this.Table}` {string.Join(',', sql)};");
             sql = new List<string>();
 
-            foreach (FieldAttribute mC in modelConstraints) {
+            foreach (FieldAttribute mC in modelConstraints)
+            {
                 if (cNames.Contains(mC.Column))
                     continue;
 
@@ -164,19 +173,21 @@ namespace MySqlEntityCore {
             }
 
             if (sql.Count() > 0)
-                new Connection().NonQuery($"ALTER TABLE `{this.Table}` {string.Join(',', sql)};"); 
+                new Connection().NonQuery($"ALTER TABLE `{this.Table}` {string.Join(',', sql)};");
         }
 
         ///<summary>Update mismatching primary keys</summary>
-        internal void UpdatePrimaryKeys() {
+        internal void UpdatePrimaryKeys()
+        {
             List<string> sql = new List<string>();
             List<string> primaryFields = new List<string>();
 
             // Get all primary key fields from model
-            foreach(FieldAttribute field in Fields) {
+            foreach (FieldAttribute field in Fields)
+            {
                 if (!field.PrimaryKey)
                     continue;
-                primaryFields.Add("`"+field.Column+"`");
+                primaryFields.Add("`" + field.Column + "`");
                 sql.Add(field.SqlDropAutoIncrement(sqlShort: true));
             }
 
@@ -184,18 +195,21 @@ namespace MySqlEntityCore {
             List<Dictionary<string, object>> primaryConstraints = DbTableConstraints().Where(
                 q => (q["CONSTRAINT_TYPE"] as string) == "PRIMARY KEY"
             ).ToList();
-            
+
             // Check for mismatches between model and table
             bool validPKs = primaryConstraints.Count() == primaryFields.Count();
-            foreach (Dictionary<string, object> primaryConstraint in primaryConstraints) {
+            foreach (Dictionary<string, object> primaryConstraint in primaryConstraints)
+            {
                 string column = (primaryConstraint["COLUMN_NAME"] as string);
                 FieldAttribute field = Fields.Where(x => x.Column == column).FirstOrDefault();
 
-                if (field == null || !field.PrimaryKey) {
+                if (field == null || !field.PrimaryKey)
+                {
                     validPKs = false;
                     if (field == null)
                         sql.Add($"DROP COLUMN `{column}`");
-                    else {
+                    else
+                    {
                         sql.Add(field.SqlDropAutoIncrement(sqlShort: true));
                         sql.Add(field.SqlAlterModify(sqlShort: true));
                     }
@@ -208,13 +222,14 @@ namespace MySqlEntityCore {
                 sql.Add("DROP PRIMARY KEY");
             if (primaryFields.Count() > 0)
                 sql.Add($"ADD PRIMARY KEY ({string.Join(',', primaryFields)})");
-            new Connection().NonQuery($"SET FOREIGN_KEY_CHECKS=0; ALTER TABLE `{this.Table}` {string.Join(',', sql)}; SET FOREIGN_KEY_CHECKS=1;"); 
+            new Connection().NonQuery($"SET FOREIGN_KEY_CHECKS=0; ALTER TABLE `{this.Table}` {string.Join(',', sql)}; SET FOREIGN_KEY_CHECKS=1;");
         }
 
         private void CleanupColumns()
         {
             string sql = "";
-            foreach (Dictionary<string, object> x in DbTableInfo()) {
+            foreach (Dictionary<string, object> x in DbTableInfo())
+            {
                 string column = (x["COLUMN_NAME"] as string);
                 FieldAttribute field = Fields.Where(q => q.Column == column).FirstOrDefault();
                 if (field == null)
