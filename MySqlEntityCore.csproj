@@ -3,11 +3,11 @@
   <PropertyGroup>
     <OutputType Condition="'$(Configuration)' == 'Debug'">Exe</OutputType>
     <OutputType Condition="'$(Configuration)' == 'Release'">Library</OutputType>
-    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <TargetFramework>net6.0</TargetFramework>
     <PackageId>MySqlEntityCore</PackageId>
     <Title>MySQL Entity Core</Title>
     <Description>Intuitive framework to quickly convert your C# models into MySQL database tables.</Description>
-    <Version>0.1.18</Version>
+    <Version>0.2.0</Version>
     <Authors>Armitxes (Jan Brodersen)</Authors>
     <Copyright>Copyright © 2022 Armitxes (Jan Brodersen)</Copyright>
     <RepositoryUrl>https://github.com/Armitxes/MySqlEntityCore</RepositoryUrl>
@@ -17,7 +17,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="MySql.Data" Version="8.0.26" />
+    <PackageReference Include="MySql.Data" Version="8.0.28" />
   </ItemGroup>
 
 </Project>
