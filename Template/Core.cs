@@ -87,7 +87,7 @@ namespace MySqlEntityCore.Template
             List<T> records = new List<T>();
             ModelAttribute tTypeAttr = ModelAttribute.Get(tType);
 
-            string sql = $"SELECT {tTypeAttr.SqlFieldList} FROM {tTypeAttr.Table}";
+            string sql = $"SELECT ({tTypeAttr.SqlFieldList}) FROM {tTypeAttr.Table}";
             if (where != null)
                 sql += $" WHERE {where}";
             if (orderby != null)
