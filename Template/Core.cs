@@ -2,55 +2,64 @@
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace MySqlEntityCore.Template {
-	/// <summary>
-	/// Core functionality for all models.
-	/// </summary>
-	public class Core {
-		internal object Origin { get; set; }
+namespace MySqlEntityCore.Template
+{
+    /// <summary>
+    /// Core functionality for all models.
+    /// </summary>
+    public class Core
+    {
+        internal object Origin { get; set; }
 
         private Type _ChildType;
-        internal Type ChildType {
-            get {
+        internal Type ChildType
+        {
+            get
+            {
                 if (_ChildType == null)
                     _ChildType = this.GetType();
-                return _ChildType; 
+                return _ChildType;
             }
         }
 
         private ModelAttribute _Instance;
-        internal ModelAttribute Instance {
-            get {
+        internal ModelAttribute Instance
+        {
+            get
+            {
                 if (_Instance == null)
                     _Instance = ModelAttribute.Get(ChildType);
-                return _Instance; 
+                return _Instance;
             }
         }
 
-        public Core() {}
+        public Core() { }
 
-        public void ConstructFromDictionary(Dictionary<string, object> dict) {
+        public void ConstructFromDictionary(Dictionary<string, object> dict)
+        {
             if (dict == null)
                 return;
 
             var flags = BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance;
 
-            foreach (KeyValuePair<string, object> item in dict) {
+            foreach (KeyValuePair<string, object> item in dict)
+            {
                 PropertyInfo property = ChildType.GetProperty(item.Key, flags);
                 if (property == null)
                     continue;
-                
+
                 object value = item.Value;
                 string strValue = value.ToString();
                 if (strValue == "")
-                    value = null;      
+                    value = null;
                 else if (property.PropertyType == typeof(string))
                     value = strValue;
                 else if (property.PropertyType == typeof(uint))
                     value = Convert.ToUInt32(value);
                 else if (property.PropertyType == typeof(DateTime))
                     value = DateTime.Parse(strValue);
-                else if (property.PropertyType.IsSubclassOf(typeof(Template.DefaultModel))) {
+                else if (property.PropertyType.IsSubclassOf(typeof(Template.DefaultModel)))
+                {
                     // We get uint value for class relation fields.
                     // For performance reasons we only provide the related ID to the instance - additionaly data is only loaded when accessed.
                     value = property.PropertyType.GetConstructor(System.Type.EmptyTypes).Invoke(System.Type.EmptyTypes);
@@ -68,11 +77,12 @@ namespace MySqlEntityCore.Template {
         /// <param name="limit">Result limit</param>
         /// <returns></returns>
         public static List<T> Get<T>(
-            string where=null,
-            string orderby=null,
-            uint offset=0,
-            uint limit=0
-        ) {
+            string where = null,
+            string orderby = null,
+            uint offset = 0,
+            uint limit = 0
+        )
+        {
             System.Type tType = typeof(T);
             List<T> records = new List<T>();
             ModelAttribute tTypeAttr = ModelAttribute.Get(tType);
@@ -82,15 +92,16 @@ namespace MySqlEntityCore.Template {
                 sql += $" WHERE {where}";
             if (orderby != null)
                 sql += $" ORDER BY {orderby}";
-            if (offset > 0 || limit > 0) {
+            if (offset > 0 || limit > 0)
+            {
                 sql += $" LIMIT";
-                if (offset > 0 && limit > 0) 
+                if (offset > 0 && limit > 0)
                     sql += $" {offset},{limit}";
                 else if (limit > 0)
                     sql += $" {limit}";
             }
             sql += ";";
-                
+
 
             List<Dictionary<string, object>> query = new Connection().Query(sql, true);
             ConstructorInfo ctor = tType.GetConstructor(System.Type.EmptyTypes);
@@ -110,5 +121,5 @@ namespace MySqlEntityCore.Template {
             }
             return records;
         }
-	}
+    }
 }

@@ -46,7 +46,7 @@ namespace MySqlEntityCore
             {
                 string result = "";
                 foreach (FieldAttribute field in this.Fields)
-                    result += field.Column + ",";
+                    result += "`" + field.Column + "`,";
                 if (result[^1..] == ",")
                     result = result[..^1];
                 return result;
