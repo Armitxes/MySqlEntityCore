@@ -102,20 +102,14 @@ namespace MySqlEntityCore.Template
             }
             sql += ";";
 
-
             List<Dictionary<string, object>> query = new Connection().Query(sql, true);
-            ConstructorInfo ctor = tType.GetConstructor(System.Type.EmptyTypes);
-            if (
-                ctor == null
-                || query.Count == 0
-            )
+            if (query.Count == 0)
                 return records;
 
             MethodInfo construct = tType.GetMethod("ConstructFromDictionary", new[] { query[0].GetType() });
-
             foreach (Dictionary<string, object> entry in query)
             {
-                object objRecord = ctor.Invoke(System.Type.EmptyTypes);
+                object objRecord = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(tType);
                 construct.Invoke(objRecord, new object[] { entry });
                 records.Add((T)System.Convert.ChangeType(objRecord, tType));
             }
