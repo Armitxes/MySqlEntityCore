@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Linq;
 
 namespace MySqlEntityCore.Template
 {
@@ -33,7 +34,41 @@ namespace MySqlEntityCore.Template
             }
         }
 
-        public Core() { }
+        internal string _CacheKey;
+        public string CacheKey
+        {
+            get
+            {
+                if (_CacheKey != null)
+                    return _CacheKey;
+
+                string result = ChildType.Name;
+
+                foreach (FieldAttribute field in Instance.Fields.Where(x => x.PrimaryKey))
+                {
+                    object val = ChildType.GetProperty(field.Name).GetValue(this);
+                    if (val == null)
+                        return null;  // A required PK field is null. Too unsafe to work with that.
+                    result += "." + val.ToString();
+                }
+
+                _CacheKey = result;
+                return _CacheKey;
+            }
+        }
+
+        public void ConstructFromClass(dynamic instance)
+        {
+            PropertyInfo[] properties = this.ChildType.GetProperties();
+            foreach (PropertyInfo property in properties)
+            {
+                if (!property.CanWrite)
+                    continue;
+
+                var oldVal = property.GetValue(instance, null);
+                property.SetValue(this, oldVal);
+            }
+        }
 
         public void ConstructFromDictionary(Dictionary<string, object> dict)
         {
@@ -60,10 +95,8 @@ namespace MySqlEntityCore.Template
                     value = DateTime.Parse(strValue);
                 else if (property.PropertyType.IsSubclassOf(typeof(Template.DefaultModel)))
                 {
-                    // We get uint value for class relation fields.
-                    // For performance reasons we only provide the related ID to the instance - additionaly data is only loaded when accessed.
-                    value = property.PropertyType.GetConstructor(System.Type.EmptyTypes).Invoke(System.Type.EmptyTypes);
-                    property.PropertyType.GetProperty("Id").SetValue(value, Convert.ToUInt32(strValue));
+                    object objRecord = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(property.PropertyType);
+                    property.PropertyType.GetProperty("Id").SetValue(objRecord, Convert.ToUInt32(strValue));
                 }
                 property.SetValue(this, value);
             }
