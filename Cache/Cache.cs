@@ -1,5 +1,4 @@
 using Microsoft.Extensions.Caching.Memory;
-using System.Threading.Tasks;
 
 namespace MySqlEntityCore
 {
@@ -15,9 +14,17 @@ namespace MySqlEntityCore
 
         internal static void Set(string key, object value, int keepSeconds = 0)
         {
-            _memoryCache.Set(key, value);
-            if (keepSeconds > 0)
-                Task.Delay(keepSeconds * 1000).ContinueWith((t) => Remove(key));
+            if (keepSeconds == 0)
+            {
+                _memoryCache.Set(key: key, value: value);
+                return;
+            }
+
+            _memoryCache.Set(
+                key: key,
+                absoluteExpiration: System.DateTimeOffset.UtcNow.AddSeconds(keepSeconds),
+                value: value
+            );
         }
 
         internal static void Remove(string key) => _memoryCache.Remove(key);
