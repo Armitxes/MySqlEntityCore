@@ -1,8 +1,10 @@
 ﻿using System.Collections.Generic;
 using MySql.Data.MySqlClient;
 
-namespace MySqlEntityCore {
-    public class Connection {
+namespace MySqlEntityCore
+{
+    public class Connection
+    {
         public static ConnectionData DefaultPool { get; private set; }
 
         private static List<string> DBs { get; set; }
@@ -10,12 +12,13 @@ namespace MySqlEntityCore {
 
         ///<summary>Establish a database connection with the given parameters.</summary>
         public static void SetDefaultPoolingConnection(
-            string host="127.0.0.1",
-            string port="3306",
-            string user="",
-            string password="",
-            string database="mysqlentitycore"
-        ) {
+            string host = "127.0.0.1",
+            string port = "3306",
+            string user = "",
+            string password = "",
+            string database = "mysqlentitycore"
+        )
+        {
             if (DefaultPool == null)
                 DefaultPool = new ConnectionData();
             DefaultPool.Host = host;
@@ -27,7 +30,8 @@ namespace MySqlEntityCore {
         }
 
         ///<summary>Get available connection from connection pool.</summary>
-        public Connection() {
+        public Connection()
+        {
             if (DefaultPool == null)
                 throw new MissingConnectionData();
         }
@@ -35,12 +39,13 @@ namespace MySqlEntityCore {
 
         ///<summary>Establish a database connection with the given parameters.</summary>
         public Connection(
-            string host="127.0.0.1",
-            string port="3306",
-            string user="",
-            string password="",
-            string database="mysqlentitycore"
-        ) {
+            string host = "127.0.0.1",
+            string port = "3306",
+            string user = "",
+            string password = "",
+            string database = "mysqlentitycore"
+        )
+        {
             if (DefaultPool == null)
                 Connection.SetDefaultPoolingConnection(
                     host: host,
@@ -52,7 +57,8 @@ namespace MySqlEntityCore {
         }
 
         ///<summary>Execute uncached query without resultset.</summary>
-        public void NonQuery(string query) {
+        public void NonQuery(string query)
+        {
             using (MySqlConnection connection = new MySqlConnection(DefaultPool.GetConnectionString()))
             {
                 using (MySqlCommand cmd = connection.CreateCommand())
@@ -67,13 +73,14 @@ namespace MySqlEntityCore {
 
         ///<summary>Execute query with resultset.</summary>
         ///<returns>List of matching rows.</returns>
-        public List<Dictionary<string, object>> Query(string query, bool cache=false) {
+        public List<Dictionary<string, object>> Query(string query)
+        {
             List<Dictionary<string, object>> result = new List<Dictionary<string, object>>();
             using (MySqlConnection connection = new MySqlConnection(DefaultPool.GetConnectionString()))
             {
                 using (MySqlCommand cmd = connection.CreateCommand())
                 {
-                    cmd.EnableCaching = cache;
+                    cmd.EnableCaching = false;
                     cmd.CommandText = query;
 
                     connection.Open();
@@ -141,7 +148,8 @@ namespace MySqlEntityCore {
             using (MySqlConnection connection = new MySqlConnection(DefaultPool.GeDbLessConnectionString()))
             {
                 connection.Open();
-                if (!Databases().Contains(name)) {
+                if (!Databases().Contains(name))
+                {
                     using (MySqlCommand cmd = connection.CreateCommand())
                     {
                         cmd.EnableCaching = false;
@@ -152,6 +160,18 @@ namespace MySqlEntityCore {
                 connection.ChangeDatabase(name);
             }
         }
+
+#if DEBUG
+        public void RecreateDatabase()
+        {
+            string dbName = Connection.DefaultPool.Database;
+            NonQuery($"DROP DATABASE IF EXISTS {dbName};");
+            DBs = null;
+            TBLs = null;
+            ChangeDatabase(dbName);
+            Cache.Clear();
+        }
+#endif
 
     }
 }

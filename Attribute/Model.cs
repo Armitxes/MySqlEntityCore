@@ -67,8 +67,7 @@ namespace MySqlEntityCore
             return new Connection().Query(
                 "SELECT column_name, data_type, is_nullable, column_key, column_type, numeric_precision, CHARACTER_MAXIMUM_LENGTH, EXTRA " +
                 "FROM information_schema.columns " +
-                $"WHERE table_schema='{Connection.DefaultPool.Database}' AND table_name='{Table}';",
-                true
+                $"WHERE table_schema='{Connection.DefaultPool.Database}' AND table_name='{Table}';"
             );
         }
 
@@ -79,8 +78,7 @@ namespace MySqlEntityCore
                 "SELECT kcu.`CONSTRAINT_NAME`, kcu.`COLUMN_NAME`, tc.`CONSTRAINT_TYPE`, kcu.`REFERENCED_COLUMN_NAME`, kcu.`REFERENCED_TABLE_NAME` " +
                 "FROM information_schema.KEY_COLUMN_USAGE AS kcu " +
                 "LEFT JOIN information_schema.table_constraints AS tc ON tc.`CONSTRAINT_SCHEMA`=kcu.table_schema AND tc.`table_name`=kcu.`table_name` AND tc.`CONSTRAINT_NAME`=kcu.`CONSTRAINT_NAME` " +
-                $"WHERE kcu.`table_schema`='{Connection.DefaultPool.Database}' AND kcu.`table_name`='{Table}';",
-                true
+                $"WHERE kcu.`table_schema`='{Connection.DefaultPool.Database}' AND kcu.`table_name`='{Table}';"
             );
         }
 
@@ -180,7 +178,11 @@ namespace MySqlEntityCore
         internal void UpdatePrimaryKeys()
         {
             List<string> sql = new List<string>();
+            string aiFix = "";
             List<string> primaryFields = new List<string>();
+            List<Dictionary<string, object>> primaryConstraints = DbTableConstraints().Where(
+                q => (q["CONSTRAINT_TYPE"] as string) == "PRIMARY KEY"
+            ).ToList();
 
             // Get all primary key fields from model
             foreach (FieldAttribute field in Fields)
@@ -189,12 +191,9 @@ namespace MySqlEntityCore
                     continue;
                 primaryFields.Add("`" + field.Column + "`");
                 sql.Add(field.SqlDropAutoIncrement(sqlShort: true));
+                if (field.AutoIncrement)
+                    aiFix += $"ALTER TABLE `{this.Table}` {field.SqlAlterModify(sqlShort: true)}; ";
             }
-
-            // Get all PK constraints from database
-            List<Dictionary<string, object>> primaryConstraints = DbTableConstraints().Where(
-                q => (q["CONSTRAINT_TYPE"] as string) == "PRIMARY KEY"
-            ).ToList();
 
             // Check for mismatches between model and table
             bool validPKs = primaryConstraints.Count() == primaryFields.Count();
@@ -209,10 +208,7 @@ namespace MySqlEntityCore
                     if (field == null)
                         sql.Add($"DROP COLUMN `{column}`");
                     else
-                    {
-                        sql.Add(field.SqlDropAutoIncrement(sqlShort: true));
                         sql.Add(field.SqlAlterModify(sqlShort: true));
-                    }
                 }
             }
 
@@ -222,7 +218,10 @@ namespace MySqlEntityCore
                 sql.Add("DROP PRIMARY KEY");
             if (primaryFields.Count() > 0)
                 sql.Add($"ADD PRIMARY KEY ({string.Join(',', primaryFields)})");
-            new Connection().NonQuery($"SET FOREIGN_KEY_CHECKS=0; ALTER TABLE `{this.Table}` {string.Join(',', sql)}; SET FOREIGN_KEY_CHECKS=1;");
+
+            new Connection().NonQuery(
+                $"SET FOREIGN_KEY_CHECKS=0; ALTER TABLE `{this.Table}` {string.Join(',', sql)}; {aiFix} SET FOREIGN_KEY_CHECKS=1;"
+            );
         }
 
         private void CleanupColumns()

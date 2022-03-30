@@ -27,6 +27,8 @@ namespace MySqlEntityCore
             );
         }
 
+        internal static void Clear() => _memoryCache.Dispose();
+
         internal static void Remove(string key) => _memoryCache.Remove(key);
     }
 }

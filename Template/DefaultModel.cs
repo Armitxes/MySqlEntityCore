@@ -97,8 +97,7 @@ namespace MySqlEntityCore.Template
 
             this.ConstructFromDictionary(
                 new Connection().Query(
-                    $"INSERT INTO {this.Instance.Table} ({fieldNames}) VALUES ({fieldValues}); SELECT LAST_INSERT_ID() AS Id;",
-                    true
+                    $"INSERT INTO {this.Instance.Table} ({fieldNames}) VALUES ({fieldValues}); SELECT LAST_INSERT_ID() AS Id;"
                 ).FirstOrDefault()
             );
         }

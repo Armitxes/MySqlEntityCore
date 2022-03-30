@@ -135,7 +135,7 @@ namespace MySqlEntityCore.Template
             }
             sql += ";";
 
-            List<Dictionary<string, object>> query = new Connection().Query(sql, true);
+            List<Dictionary<string, object>> query = new Connection().Query(sql);
             if (query.Count == 0)
                 return records;
 
