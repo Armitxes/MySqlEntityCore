@@ -97,6 +97,7 @@ namespace MySqlEntityCore.Template
                 {
                     object objRecord = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(property.PropertyType);
                     property.PropertyType.GetProperty("Id").SetValue(objRecord, Convert.ToUInt32(strValue));
+                    value = objRecord;
                 }
                 property.SetValue(this, value);
             }
