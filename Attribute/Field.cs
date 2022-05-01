@@ -76,9 +76,11 @@ namespace MySqlEntityCore
             if (obj == null)
                 return null;
             object value = PropInfo.GetValue(obj);
+            if (value is null)
+                return null;
             if (value is DateTime)
                 return Convert.ToDateTime(value).ToString("yyyy-MM-dd HH:mm:ss");
-            else if (IsModelClass)
+            if (IsModelClass)
                 return value == null ? null : (value as Template.DefaultModel).Id.ToString();
             return value.ToString();
         }
