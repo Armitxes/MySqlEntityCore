@@ -8,6 +8,7 @@ namespace MySqlEntityCore.Test
         public void Start()
         {
             InitEntityCore();
+            Test.DataType.Test();
             Test.Contact.Test();
             Test.User.Test();
         }
