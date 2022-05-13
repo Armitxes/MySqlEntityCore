@@ -44,12 +44,12 @@ namespace MySqlEntityCore
                     new TableInfo()
                     {
                         Name = row.GetValueOrDefault("table_name", "-"),
-                        Rows = row.GetValueOrDefault("table_rows", 0),
-                        AvgRowLength = row.GetValueOrDefault("avg_row_length", 0),
-                        DataLength = row.GetValueOrDefault("data_length", 0),
-                        MaxDataLength = row.GetValueOrDefault("max_data_length", 0),
-                        IndexLength = row.GetValueOrDefault("index_length", 0),
-                        AutoIncrement = row.GetValueOrDefault("auto_increment", 0),
+                        Rows = (uint)row.GetValueOrDefault("table_rows", 0),
+                        AvgRowLength = (uint)row.GetValueOrDefault("avg_row_length", 0),
+                        DataLength = (uint)row.GetValueOrDefault("data_length", 0),
+                        MaxDataLength = (uint)row.GetValueOrDefault("max_data_length", 0),
+                        IndexLength = (uint)row.GetValueOrDefault("index_length", 0),
+                        AutoIncrement = (uint)row.GetValueOrDefault("auto_increment", 0),
                         Encoding = row.GetValueOrDefault("table_collation", ""),
                     }
                 );
