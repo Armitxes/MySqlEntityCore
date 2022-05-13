@@ -60,6 +60,9 @@ namespace MySqlEntityCore.Template
             }
         }
 
+        ///<summary>Information about the related database table.</summary>
+        public TableInfo TableInfo => TableInfo.Get(Connection.DefaultPool.Database).Where(x => x.Name == Instance.Table).FirstOrDefault();
+
         /// <summary>Write dynamic object with matching properties into current object instance</summary>
         /// <param name="instance">object instance</param> 
         public void ConstructFromClass(dynamic instance)

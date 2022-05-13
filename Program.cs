@@ -6,8 +6,6 @@ namespace MySqlEntityCore
     // Only available if not release build.
     public class Program
     {
-
-
         public static void Main(string[] args)
         {
             Console.Write("[TEST] Establishing initial connection: ");
