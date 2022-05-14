@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 
 namespace MySqlEntityCore.Template
@@ -35,6 +36,9 @@ namespace MySqlEntityCore.Template
             }
         }
 
+        ///<summary>Information about the related database table.</summary>
+        public TableInfo TableInfo => GetTableInfo(ChildType);
+
         internal string _CacheKey;
 
         /// <summary>Unique cache key</summary>
@@ -61,7 +65,12 @@ namespace MySqlEntityCore.Template
         }
 
         ///<summary>Information about the related database table.</summary>
-        public TableInfo TableInfo => TableInfo.Get(Connection.DefaultPool.Database).Where(x => x.Name == Instance.Table).FirstOrDefault();
+        public static TableInfo GetTableInfo(Type tType)
+        {
+            ModelAttribute tTypeAttr = ModelAttribute.Get(tType);
+            List<MySqlEntityCore.TableInfo> tinfo = MySqlEntityCore.TableInfo.Get(Connection.DefaultPool.Database);
+            return tinfo.Where(x => x.Name == tTypeAttr.Table).FirstOrDefault();
+        }
 
         /// <summary>Write dynamic object with matching properties into current object instance</summary>
         /// <param name="instance">object instance</param> 
