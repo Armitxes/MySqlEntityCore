@@ -29,6 +29,8 @@ namespace MySqlEntityCore
             new Connection().ChangeDatabase(database);  // Ensure that DB exists
         }
 
+        public static List<TableInfo> InformationSchemaTables() => (DefaultPool == null) ? null : TableInfo.Get(DefaultPool.Database);
+
         ///<summary>Get available connection from connection pool.</summary>
         public Connection()
         {

@@ -4,7 +4,7 @@ namespace MySqlEntityCore
 {
     internal static class Cache
     {
-        private static readonly MemoryCache _memoryCache = new MemoryCache(new MemoryCacheOptions());
+        private static MemoryCache _memoryCache = new MemoryCache(new MemoryCacheOptions());
 
         internal static dynamic Get(string key)
         {
@@ -27,7 +27,11 @@ namespace MySqlEntityCore
             );
         }
 
-        internal static void Clear() => _memoryCache.Dispose();
+        internal static void Clear()
+        {
+            _memoryCache.Dispose();
+            _memoryCache = new MemoryCache(new MemoryCacheOptions());
+        }
 
         internal static void Remove(string key) => _memoryCache.Remove(key);
     }
