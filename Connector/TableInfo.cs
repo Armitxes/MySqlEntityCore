@@ -40,19 +40,21 @@ namespace MySqlEntityCore
             );
             foreach (Dictionary<string, dynamic> row in rows)
             {
-                result.Add(
-                    new TableInfo()
-                    {
-                        Name = row.GetValueOrDefault("table_name", "-"),
-                        Rows = (uint)row.GetValueOrDefault("table_rows", 0),
-                        AvgRowLength = (uint)row.GetValueOrDefault("avg_row_length", 0),
-                        DataLength = (uint)row.GetValueOrDefault("data_length", 0),
-                        MaxDataLength = (uint)row.GetValueOrDefault("max_data_length", 0),
-                        IndexLength = (uint)row.GetValueOrDefault("index_length", 0),
-                        AutoIncrement = (uint)row.GetValueOrDefault("auto_increment", 0),
-                        Encoding = row.GetValueOrDefault("table_collation", ""),
-                    }
-                );
+                dynamic autoIncrement = row.GetValueOrDefault("AUTO_INCREMENT", 0);
+                if (System.DBNull.Value.Equals(autoIncrement))
+                    autoIncrement = 0;
+
+                result.Add(new TableInfo()
+                {
+                    Name = row.GetValueOrDefault("TABLE_NAME", "-"),
+                    Rows = (uint)row.GetValueOrDefault("TABLE_ROWS", 0),
+                    AvgRowLength = (uint)row.GetValueOrDefault("AVG_ROW_LENGTH", 0),
+                    DataLength = (uint)row.GetValueOrDefault("DATA_LENGTH", 0),
+                    MaxDataLength = (uint)row.GetValueOrDefault("MAX_DATA_LENGTH", 0),
+                    IndexLength = (uint)row.GetValueOrDefault("INDEX_LENGTH", 0),
+                    AutoIncrement = (uint)autoIncrement,
+                    Encoding = row.GetValueOrDefault("TABLE_COLLATION", ""),
+                });
             }
             Cache.Set("DBTableInfo", result, 300);
             return result;
