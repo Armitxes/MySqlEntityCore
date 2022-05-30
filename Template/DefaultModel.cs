@@ -56,6 +56,7 @@ namespace MySqlEntityCore.Template
                 this.ConstructFromDictionary(record);
             }
             Cache.Set(CacheKey, this, 60);
+            this.Origin = this.MemberwiseClone();
         }
 
         /// <summary>Get a list of fully loaded records with the corresponding ids.</summary>
@@ -125,8 +126,19 @@ namespace MySqlEntityCore.Template
             if (!changes)
                 return;
             sql += $" WHERE id={this.Id};";
-            new Connection().NonQuery(sql);
+
+            try
+            {
+                new Connection().NonQuery(sql);
+            }
+            catch
+            {
+                // Revert to origin if anything goes wrong.
+                this.ConstructFromClass(this.Origin);
+            }
+
             Cache.Set(CacheKey, this, 60);
+            this.Origin = this.MemberwiseClone();
         }
 
         /// <summary>Delete current record from the database.</summary>
@@ -134,6 +146,7 @@ namespace MySqlEntityCore.Template
         {
             new Connection().NonQuery($"DELETE FROM {Instance.Table} WHERE id={this.Id};");
             Cache.Remove(CacheKey);
+            this.Origin = null;
         }
     }
 }

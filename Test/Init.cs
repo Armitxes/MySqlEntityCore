@@ -9,7 +9,9 @@ namespace MySqlEntityCore.Test
         {
             InitEntityCore();
             Test.DataType.Test();
-            Test.Contact.Test();
+            Test.Contact.TestCreate();
+            Test.Contact.TestWriteCached();
+            Test.Contact.TestWriteUncached();
             Test.User.Test();
         }
 

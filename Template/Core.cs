@@ -74,6 +74,7 @@ namespace MySqlEntityCore.Template
                 var oldVal = property.GetValue(instance, null);
                 property.SetValue(this, oldVal);
             }
+            this.Origin = this.MemberwiseClone();
         }
 
         /// <summary>Write dict into instance class object.</summary>
@@ -123,6 +124,7 @@ namespace MySqlEntityCore.Template
 
                 this.SetPropertyValue(property: property, value: item.Value);
             }
+            this.Origin = this.MemberwiseClone();
         }
 
         internal void SetPropertyValue(PropertyInfo property, object value)

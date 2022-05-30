@@ -19,6 +19,8 @@ namespace MySqlEntityCore.Test
             Console.Write("[TEST] Creating simple default record: ");
             user.Create();
 
+            TableInfo.Get("mysqlentitycore");
+
             bool success = user.Id == 1;  // We are on a new DB with no records. Must be 1.
             Console.WriteLine(success);
             return success;
