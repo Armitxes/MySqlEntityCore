@@ -27,15 +27,58 @@ namespace MySqlEntityCore.Test
         [Field]
         public DateTime TestDateTime { get; set; }
 
+        public DataType() : base() { }
+
+        public DataType(uint id) : base(id) { }
+
         public static bool Test()
         {
-            DataType record = new DataType();
-            Console.Write("[TEST] Testing data types: ");
-            record.Create();
+            Console.WriteLine("[TEST] Testing data types.");
+            return (
+                TestCreate()
+                && TestGet()
+            );
+        }
 
-            bool success = record.Id == 1;  // We are on a new DB with no records. Must be 1.
-            Console.WriteLine(success);
-            return success;
+        private static bool TestCreate()
+        {
+            DataType record = new DataType();
+            record.Create();
+            if (record.TestBoolNull)
+                throw new SystemException(
+                    "[TEST] Property TestBoolNull is true."
+                );
+
+            if (!record.TestBoolTrue)
+                throw new SystemException(
+                    "[TEST] Property TestBoolTrue is false."
+                );
+
+            if (record.TestBoolFalse)
+                throw new SystemException(
+                    "[TEST] Property TestBoolFalse is true."
+                );
+            return record.Id == 1;
+        }
+
+        private static bool TestGet()
+        {
+            DataType record = new DataType(1);
+            if (record.TestBoolNull)
+                throw new SystemException(
+                    "[TEST] Property TestBoolNull is true."
+                );
+
+            if (!record.TestBoolTrue)
+                throw new SystemException(
+                    "[TEST] Property TestBoolTrue is false."
+                );
+
+            if (record.TestBoolFalse)
+                throw new SystemException(
+                    "[TEST] Property TestBoolFalse is true."
+                );
+            return record.Id == 1;
         }
 
     }

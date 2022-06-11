@@ -1,8 +1,7 @@
 ﻿using System;
+using System.Linq;
 using System.Collections.Generic;
 using System.Reflection;
-using System.Linq;
-using System.Text.RegularExpressions;
 
 
 namespace MySqlEntityCore.Template
@@ -129,6 +128,9 @@ namespace MySqlEntityCore.Template
 
         internal void SetPropertyValue(PropertyInfo property, object value)
         {
+            if (property.PropertyType == typeof(bool))
+                value = value != Convert.DBNull;
+
             string strValue = value.ToString();
             if (strValue == "")
                 value = null;
