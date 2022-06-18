@@ -1,5 +1,4 @@
 # MySQL Entity Core
-
 Intuitive framework to quickly convert your C# models into MySQL database tables.
 
 Unlike alternative frameworks such as the [MS Entity Framework](https://docs.microsoft.com/de-de/ef/), we rely on [attributes](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/attributes/) to quickly describe you model and model fields to the database. 

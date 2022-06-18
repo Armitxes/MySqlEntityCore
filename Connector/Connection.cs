@@ -38,7 +38,6 @@ namespace MySqlEntityCore
                 throw new MissingConnectionData();
         }
 
-
         ///<summary>Establish a database connection with the given parameters.</summary>
         public Connection(
             string host = "127.0.0.1",

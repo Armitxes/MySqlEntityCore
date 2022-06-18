@@ -31,19 +31,22 @@ namespace MySqlEntityCore.Test
 
         public DataType(uint id) : base(id) { }
 
-        public static bool Test()
+        public static void Test()
         {
             Console.WriteLine("[TEST] Testing data types.");
-            return (
-                TestCreate()
-                && TestGet()
-            );
+            TestCreate();
+            TestGet();
         }
 
-        private static bool TestCreate()
+        private static void TestCreate()
         {
             DataType record = new DataType();
             record.Create();
+            if (record.Id != 1)
+                throw new SystemException(
+                    "[TEST] DataType create test failed."
+                );
+
             if (record.TestBoolNull)
                 throw new SystemException(
                     "[TEST] Property TestBoolNull is true."
@@ -58,15 +61,20 @@ namespace MySqlEntityCore.Test
                 throw new SystemException(
                     "[TEST] Property TestBoolFalse is true."
                 );
-            return record.Id == 1;
         }
 
-        private static bool TestGet()
+        private static void TestGet()
         {
             DataType record = new DataType(1);
+
+            if (record.Id != 1)
+                throw new SystemException(
+                    "[TEST] DataType get test failed."
+                );
+
             if (record.TestBoolNull)
                 throw new SystemException(
-                    "[TEST] Property TestBoolNull is true."
+                    "[TEST] Property TestBoolNull is true."  // null values should be considered false.
                 );
 
             if (!record.TestBoolTrue)
@@ -78,7 +86,6 @@ namespace MySqlEntityCore.Test
                 throw new SystemException(
                     "[TEST] Property TestBoolFalse is true."
                 );
-            return record.Id == 1;
         }
 
     }

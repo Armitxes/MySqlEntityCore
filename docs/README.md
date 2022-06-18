@@ -4,11 +4,14 @@
 
 * [Connect to MySQL](connection.md)
 * Actions
-  * [Data Definition](actions/data-definition.md)
-  * [Data Query](actions/data-query.md)
-  * Data Manipulation
-  * Transaction Control
+  * [Data Definition (DDL)](actions/data-definition.md)
+  * [Data Query (DQL)](actions/data-query.md)
+  * [Data Manipulation (DML)](actions/data-manipulation.md)
+  * Transaction Control (TCL)
   * Data Control
+* Performance
+  * Caching
+  * Pooling
 * Relations
   * one2one
   * one2many

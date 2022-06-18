@@ -11,19 +11,31 @@ namespace MySqlEntityCore.Test
         [Field(Size = 64)]
         public string Password { get; set; }
 
-        public static bool Test()
+        public static void Test()
         {
+            TestCreate();
+            TestTableInfo();
+        }
+
+        private static void TestCreate()
+        {
+            Console.WriteLine("[TEST] Creating simple default record.");
             User user = new User();
             user.Username = "User1";
             user.Password = "12345";
-            Console.Write("[TEST] Creating simple default record: ");
             user.Create();
 
-            TableInfo.Get("mysqlentitycore");
-
-            bool success = user.Id == 1;  // We are on a new DB with no records. Must be 1.
-            Console.WriteLine(success);
-            return success;
+            if (user.Id != 1)
+                throw new SystemException(
+                    "[TEST] User create test failed."
+                );
         }
+
+        private static void TestTableInfo()
+        {
+            Console.WriteLine("[TEST] User table info.");
+            TableInfo.Get("mysqlentitycore");
+        }
+
     }
 }

@@ -4,7 +4,7 @@
 To establish a connection, we require the `MySqlEntityCore.Connection` class.
 
 Example with default values:
-```
+```csharp
 new Connection(
     host: "127.0.0.1",
     string: "3306",
