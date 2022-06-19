@@ -11,6 +11,8 @@ namespace MySqlEntityCore.Template
     /// </summary>
     public class Core
     {
+        ///<summary>All queries will be executed within the transaction.</summary>
+        public Transaction AttachedTransaction { get; internal set; }
         internal object Origin { get; set; }
 
         private Type _ChildType;
@@ -154,13 +156,15 @@ namespace MySqlEntityCore.Template
         /// <param name="orderby">SQL "ORDER BY" statement</param>
         /// <param name="offset">Result offset</param>
         /// <param name="limit">Result limit</param>
+        /// <param name="transaction">Transaction to be used.</param>
         /// <returns>Result list of given class type.</returns>
         public static List<T> Get<T>(
             string where = null,
             string orderby = null,
             uint offset = 0,
-            uint limit = 0
-        )
+            uint limit = 0,
+            Transaction transaction = null
+        ) where T : Core
         {
             System.Type tType = typeof(T);
             List<T> records = new List<T>();
@@ -181,18 +185,37 @@ namespace MySqlEntityCore.Template
             }
             sql += ";";
 
-            List<Dictionary<string, object>> query = new Connection().Query(sql);
+            List<Dictionary<string, object>> query = transaction == null ? new Connection().Query(sql) : transaction.Query(sql);
             if (query.Count == 0)
                 return records;
 
             MethodInfo construct = tType.GetMethod("ConstructFromDictionary", new[] { query[0].GetType() });
             foreach (Dictionary<string, object> entry in query)
             {
-                object objRecord = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(tType);
-                construct.Invoke(objRecord, new object[] { entry });
-                records.Add((T)System.Convert.ChangeType(objRecord, tType));
+                entry["AttachedTransaction"] = transaction;
+                dynamic record = System.Runtime.Serialization.FormatterServices.GetUninitializedObject(tType);
+                construct.Invoke(record, new object[] { entry });
+
+                // T is at minimum inherits Core.
+                // Check if T also inherits from DefaultModel
+                if (typeof(DefaultModel).IsAssignableFrom(tType))
+                    (record as DefaultModel).StoreInCache(60);
+                records.Add(record);
             }
             return records;
+        }
+
+        public List<Dictionary<string, object>> Query(string query)
+        {
+            return AttachedTransaction == null ? new Connection().Query(query) : AttachedTransaction.Query(query);
+        }
+
+        public void NonQuery(string query)
+        {
+            if (AttachedTransaction == null)
+                new Connection().NonQuery(query);
+            else
+                AttachedTransaction.NonQuery(query);
         }
     }
 }

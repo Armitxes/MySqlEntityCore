@@ -7,7 +7,7 @@
     <PackageId>MySqlEntityCore</PackageId>
     <Title>MySQL Entity Core</Title>
     <Description>Intuitive framework to quickly convert your C# models into MySQL database tables.</Description>
-    <Version>0.2.19</Version>
+    <Version>0.2.20</Version>
     <Authors>Armitxes (Jan Brodersen)</Authors>
     <Copyright>Copyright © 2022 Armitxes (Jan Brodersen)</Copyright>
     <RepositoryUrl>https://github.com/Armitxes/MySqlEntityCore</RepositoryUrl>

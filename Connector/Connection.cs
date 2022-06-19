@@ -57,10 +57,12 @@ namespace MySqlEntityCore
                 );
         }
 
+        public static MySqlConnection GetMySqlConnection() => new MySqlConnection(DefaultPool.GetConnectionString());
+
         ///<summary>Execute uncached query without resultset.</summary>
         public void NonQuery(string query)
         {
-            using (MySqlConnection connection = new MySqlConnection(DefaultPool.GetConnectionString()))
+            using (MySqlConnection connection = GetMySqlConnection())
             {
                 using (MySqlCommand cmd = connection.CreateCommand())
                 {
@@ -77,10 +79,11 @@ namespace MySqlEntityCore
         public List<Dictionary<string, object>> Query(string query)
         {
             List<Dictionary<string, object>> result = new List<Dictionary<string, object>>();
-            using (MySqlConnection connection = new MySqlConnection(DefaultPool.GetConnectionString()))
+            using (MySqlConnection connection = GetMySqlConnection())
             {
                 using (MySqlCommand cmd = connection.CreateCommand())
                 {
+                    cmd.Connection = connection;
                     cmd.EnableCaching = false;
                     cmd.CommandText = query;
 
@@ -109,8 +112,9 @@ namespace MySqlEntityCore
             {
                 using (MySqlCommand cmd = connection.CreateCommand())
                 {
-                    connection.Open();
+                    cmd.Connection = connection;
                     cmd.CommandText = "show databases;";
+                    connection.Open();
 
                     MySqlDataReader rdr = cmd.ExecuteReader();
                     while (rdr.Read())
@@ -127,7 +131,7 @@ namespace MySqlEntityCore
             if (TBLs != null)
                 return TBLs;
             TBLs = new List<string>();
-            using (MySqlConnection connection = new MySqlConnection(DefaultPool.GetConnectionString()))
+            using (MySqlConnection connection = GetMySqlConnection())
             {
                 using (MySqlCommand cmd = connection.CreateCommand())
                 {
@@ -153,6 +157,7 @@ namespace MySqlEntityCore
                 {
                     using (MySqlCommand cmd = connection.CreateCommand())
                     {
+                        cmd.Connection = connection;
                         cmd.EnableCaching = false;
                         cmd.CommandText = $"CREATE DATABASE {name} CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci;";
                         cmd.ExecuteNonQuery();

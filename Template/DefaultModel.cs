@@ -5,7 +5,7 @@ using System.Linq;
 namespace MySqlEntityCore.Template
 {
 
-    /// <summary>Create a model with an unsigned Id as primary key.</summary>
+    ///<summary>Create a model with an unsigned Id as primary key.</summary>
     public class DefaultModel : Template.Core
     {
 
@@ -31,15 +31,15 @@ namespace MySqlEntityCore.Template
             }
         }
 
-        /// <summary>Get the record with the corresponding id.</summary>
-        /// <param name="id"></param>
+        ///<summary>Get the record with the corresponding id.</summary>
+        ///<param name="id"></param>
         public DefaultModel(uint id)
         {
             this.Id = id;
             Fetch();
         }
 
-        /// <summary>Fetch id related information from cache and database.</summary>
+        ///<summary>Fetch id related information from cache and database.</summary>
         public void Fetch()
         {
             if (this.Id == 0)
@@ -55,22 +55,38 @@ namespace MySqlEntityCore.Template
                 ).FirstOrDefault();
                 this.ConstructFromDictionary(record);
             }
-            Cache.Set(CacheKey, this, 60);
+
+            if (this.AttachedTransaction != null)
+                return;
+
+            this.StoreInCache();
             this.Origin = this.MemberwiseClone();
         }
 
-        /// <summary>Get a list of fully loaded records with the corresponding ids.</summary>
-        /// <param name="ids"></param>
-        /// <returns></returns>
-        public static List<T> Get<T>(uint[] ids)
+        ///<summary>Get the record with the corresponding id.</summary>
+        ///<param name="id"></param>
+        ///<returns></returns>
+        public static T Get<T>(uint id, Transaction transaction = null) where T : DefaultModel
         {
             return Get<T>(
-                where: $"`id` IN ({string.Join(",", ids)}"
+                where: $"`id`={id}",
+                transaction: transaction
+            ).FirstOrDefault();
+        }
+
+        ///<summary>Get a list of fully loaded records with the corresponding ids.</summary>
+        ///<param name="ids"></param>
+        ///<returns></returns>
+        public static List<T> Get<T>(uint[] ids, Transaction transaction = null) where T : DefaultModel
+        {
+            return Get<T>(
+                where: $"`id` IN ({string.Join(",", ids)}",
+                transaction: transaction
             );
         }
 
-        /// <summary>Create a new record in the database.</summary>
-        /// <returns>Created model.</returns>
+        ///<summary>Create a new record in the database.</summary>
+        ///<returns>Created model.</returns>
         public void Create()
         {
             string fieldNames = "";
@@ -96,14 +112,11 @@ namespace MySqlEntityCore.Template
             if (fieldValues[^1..] == ",")
                 fieldValues = fieldValues[..^1];
 
-            this.ConstructFromDictionary(
-                new Connection().Query(
-                    $"INSERT INTO {this.Instance.Table} ({fieldNames}) VALUES ({fieldValues}); SELECT LAST_INSERT_ID() AS Id;"
-                ).FirstOrDefault()
-            );
+            string sql = $"INSERT INTO {this.Instance.Table} ({fieldNames}) VALUES ({fieldValues}); SELECT LAST_INSERT_ID() AS Id;";
+            this.ConstructFromDictionary(Query(sql).FirstOrDefault());
         }
 
-        /// <summary>Write record changes to the database.</summary>
+        ///<summary>Write record changes to the database.</summary>
         public void Write()
         {
             if (this.Origin == null || this.Id == 0)
@@ -129,7 +142,7 @@ namespace MySqlEntityCore.Template
 
             try
             {
-                new Connection().NonQuery(sql);
+                NonQuery(sql);
             }
             catch
             {
@@ -137,16 +150,30 @@ namespace MySqlEntityCore.Template
                 this.ConstructFromClass(this.Origin);
             }
 
-            Cache.Set(CacheKey, this, 60);
+            if (this.AttachedTransaction != null)
+                return;
+
+            this.StoreInCache();
             this.Origin = this.MemberwiseClone();
         }
 
-        /// <summary>Delete current record from the database.</summary>
+        ///<summary>Delete current record from the database.</summary>
         public void Delete()
         {
-            new Connection().NonQuery($"DELETE FROM {Instance.Table} WHERE id={this.Id};");
+            NonQuery($"DELETE FROM {Instance.Table} WHERE id={this.Id};");
             Cache.Remove(CacheKey);
             this.Origin = null;
+        }
+
+        ///<summary>
+        ///Stores the current instance in cache.
+        ///Records with attached transactions will be ignored.
+        ///</summary>
+        internal void StoreInCache(int keepSeconds = 60)
+        {
+            // We only cache records not isolated within transactions.
+            if (AttachedTransaction == null && Id != 0)
+                Cache.Set(CacheKey, this, keepSeconds);
         }
     }
 }

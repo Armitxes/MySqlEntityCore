@@ -13,6 +13,7 @@ namespace MySqlEntityCore.Test
             Test.Contact.TestWriteCached();
             Test.Contact.TestWriteUncached();
             Test.User.Test();
+            Test.Transaction.Test();
         }
 
         private void InitEntityCore()

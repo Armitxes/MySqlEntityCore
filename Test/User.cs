@@ -11,6 +11,9 @@ namespace MySqlEntityCore.Test
         [Field(Size = 64)]
         public string Password { get; set; }
 
+        public User() : base() { }
+        public User(uint id) : base(id) { }
+
         public static void Test()
         {
             TestCreate();
@@ -20,7 +23,7 @@ namespace MySqlEntityCore.Test
         private static void TestCreate()
         {
             Console.WriteLine("[TEST] Creating simple default record.");
-            User user = new User();
+            User user = new User(1);
             user.Username = "User1";
             user.Password = "12345";
             user.Create();
