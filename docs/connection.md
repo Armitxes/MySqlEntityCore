@@ -13,7 +13,6 @@ new Connection(
     database: "mysqlentitycore"
 );
 ```
-Of course we strongly disencourage the use of any superusers on production environments.
 
 It's recommended to call this constructor as early as possible to provide the application default connection details for further queries. Alternatively you can call the static `MySqlEntityCore.Connection.SetDefaultPoolingConnection` method.
 This command will not open or pull any connection from the pool until queries are executed.

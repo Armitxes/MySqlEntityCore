@@ -205,11 +205,13 @@ namespace MySqlEntityCore.Template
             return records;
         }
 
+        ///<summary>Execute query with expected response.</summary>
         public List<Dictionary<string, object>> Query(string query)
         {
             return AttachedTransaction == null ? new Connection().Query(query) : AttachedTransaction.Query(query);
         }
 
+        ///<summary>Execute query without response.</summary>
         public void NonQuery(string query)
         {
             if (AttachedTransaction == null)
