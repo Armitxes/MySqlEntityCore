@@ -8,7 +8,7 @@
   * Copy and paste is NOT your friend.
     * You need code from a method in another method? Move it into an own method and call it instead.
 * Rely on open source wherever you can
-* Keep it simple
+* Keep it simple, stop overthinking
   * Use variable names that make sense.
   * Every indent increases the complexity and decreases readability.
 * Keep it small

@@ -15,5 +15,5 @@
 * Relations
   * [one2one](relations/one2one.md)
   * [one2many](relations/one2many.md)
-  * [many2one](relations/one2many.md)
-  * many2many
+  * [many2one](relations/many2one.md)
+  * [many2many](relations/many2many.md)
