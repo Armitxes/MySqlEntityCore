@@ -1,7 +1,7 @@
 [<- Back](../README.md)
 
 # One2many
-In a one2many relation one record has zero or more related record in another model.
+In a one2many relation one record has zero or more related records in another model.
 By creating a one2many relationship your autmatically create a many2one relationship and vice versa.
 
 

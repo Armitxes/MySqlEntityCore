@@ -1,7 +1,7 @@
 [<- Back](../README.md)
 
 # Many2many
-In a many2one relation many records are related to many record in another model and vice versa.
+In a many2one relation many records are related to many records in another model and vice versa.
 For example one group has many users, but one user may also have many groups.
 
 ```csharp
