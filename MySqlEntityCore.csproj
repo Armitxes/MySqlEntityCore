@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType Condition="'$(Configuration)' == 'Debug'">Exe</OutputType>
+    <OutputType Condition="'$(Configuration)' == 'Release'">Library</OutputType>
+    <TargetFramework>net6.0</TargetFramework>
+    <PackageId>MySqlEntityCore</PackageId>
+    <Title>MySQL Entity Core</Title>
+    <Description>Intuitive framework to quickly convert your C# models into MySQL database tables.</Description>
+    <Version>0.3.3</Version>
+    <Authors>Armitxes (Jan Brodersen)</Authors>
+    <Copyright>Copyright © 2022 Armitxes (Jan Brodersen)</Copyright>
+    <RepositoryUrl>https://github.com/Armitxes/MySqlEntityCore</RepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <DefaultItemExcludes Condition="'$(Configuration)' == 'Release'">$(DefaultItemExcludes);Program.cs;Test\**</DefaultItemExcludes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Caching.Memory" Version="6.0.1" />
+    <PackageReference Include="MySql.Data" Version="8.0.28" />
+  </ItemGroup>
+
+</Project>

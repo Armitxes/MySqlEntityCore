@@ -1,0 +1,29 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "debug",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/MySqlEntityCore.csproj",
+                "-c", "Debug",
+                "/property:GenerateFullPaths=true"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "release",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "build",
+                "${workspaceFolder}/MySqlEntityCore.csproj",
+                "-c", "Release",
+                "/property:GenerateFullPaths=true"
+            ],
+            "problemMatcher": "$msCompile"
+        }
+    ]
+}
