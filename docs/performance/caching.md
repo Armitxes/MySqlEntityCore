@@ -2,7 +2,7 @@
 
 # Caching
 `MySqlEntityCore.Cache` is responsible for caching retrieved database records to minimize database requests.
-`MySqlEnitityCore` handles caching by itself, it's thereby recommended not to intervene.
+`MySqlEntityCore` handles caching by itself, it's thereby recommended not to intervene.
 
 ## Get
 Cache entries can be retrieved by calling the `Get(string key)` method.

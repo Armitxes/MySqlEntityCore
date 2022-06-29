@@ -7,7 +7,7 @@
     <PackageId>MySqlEntityCore</PackageId>
     <Title>MySQL Entity Core</Title>
     <Description>Intuitive framework to quickly convert your C# models into MySQL database tables.</Description>
-    <Version>0.3.4</Version>
+    <Version>0.3.5</Version>
     <Authors>Armitxes (Jan Brodersen)</Authors>
     <Copyright>Copyright © 2022 Armitxes (Jan Brodersen)</Copyright>
     <RepositoryUrl>https://github.com/Armitxes/MySqlEntityCore</RepositoryUrl>
@@ -15,7 +15,7 @@
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <DefaultItemExcludes Condition="'$(Configuration)' == 'Release'">$(DefaultItemExcludes);Program.cs;Test\**</DefaultItemExcludes>
     <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
-    <PackageLicenseUrl>https://licenses.nuget.org/GPL-3.0-only</PackageLicenseUrl>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
   </PropertyGroup>
 
   <ItemGroup>
