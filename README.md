@@ -11,6 +11,7 @@ Combining [attributes](https://docs.microsoft.com/en-us/dotnet/csharp/programmin
 
 ## Requirements
 * MySQL Server 8.0 or greater.
+* .NET (Core) 6 or above
 * This project uses the MySql.Data package for database transactions.
 
 ## Development
