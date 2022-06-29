@@ -133,7 +133,7 @@ namespace MySqlEntityCore.Template
             if (property.PropertyType == typeof(bool))
                 value = value != Convert.DBNull;
 
-            string strValue = value.ToString();
+            string strValue = value?.ToString();
             if (strValue == "")
                 value = null;
             else if (property.PropertyType == typeof(string))

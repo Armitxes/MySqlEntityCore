@@ -18,6 +18,7 @@ namespace MySqlEntityCore.Test
         {
             TestCreate();
             TestTableInfo();
+            TestGet();
         }
 
         private static void TestCreate()
@@ -38,6 +39,16 @@ namespace MySqlEntityCore.Test
         {
             Console.WriteLine("[TEST] User table info.");
             TableInfo.Get("mysqlentitycore");
+        }
+
+        private static void TestGet()
+        {
+            Get<User>(
+                where: "`Id`=1",
+                orderby: "`id` DESC",
+                offset: 0,
+                limit: 1
+            );
         }
 
     }
