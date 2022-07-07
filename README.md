@@ -1,7 +1,9 @@
+![GitHub](https://img.shields.io/github/license/Armitxes/MySqlEntityCore) [![NuGet Package](https://github.com/Armitxes/MySqlEntityCore/actions/workflows/nuget.yml/badge.svg)](https://github.com/Armitxes/MySqlEntityCore/actions/workflows/nuget.yml) [![NuGet](https://img.shields.io/nuget/v/MySqlEntityCore?color=darkgreen)](https://www.nuget.org/packages/MySqlEntityCore) [![MySqlEntityCore on fuget.org](https://www.fuget.org/packages/MySqlEntityCore/badge.svg)](https://www.fuget.org/packages/MySqlEntityCore)
+
 # MySQL Entity Core
 Intuitive framework to quickly convert your C# models into MySQL database tables.
 
-Unlike alternative frameworks such as the [MS Entity Framework](https://docs.microsoft.com/de-de/ef/), we rely on [attributes](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/attributes/) to quickly describe you model and model fields to the database. 
+Unlike alternative frameworks such as the [MS Entity Framework](https://docs.microsoft.com/de-de/ef/), we rely on [attributes](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/attributes/) to quickly describe your model and model fields to the database. 
 
 Combining [attributes](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/attributes/) with custom attribute properties and native [data types](https://docs.microsoft.com/de-de/dotnet/csharp/language-reference/builtin-types/built-in-types) provides the required flexibility for any database concept.
 

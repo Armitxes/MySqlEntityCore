@@ -1,9 +1,8 @@
-# This is a basic workflow to help you get started with Actions
-
 name: NuGet Package
 on:
   push:
-    branches: [ release ]
+    branches:
+      - release
 
 jobs:
   build:
@@ -26,3 +25,6 @@ jobs:
 
       - name: Push package to GitHub
         run: dotnet nuget push ./package/*.nupkg --api-key "${{secrets.GH_PACKAGE}}" --source "github" --skip-duplicate
+
+      - name: Push package to NuGet
+        run: dotnet nuget push ./package/*.nupkg --api-key "${{secrets.NG_PACKAGE}}" --source "nuget" --skip-duplicate

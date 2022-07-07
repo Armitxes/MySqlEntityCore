@@ -21,3 +21,6 @@ Cache entries are removed by the `Remove(string key)` method.
 ```csharp
 MySqlEntityCore.Cache.Remove(string key);
 ```
+
+## Notes
+- MySQL originally featured caching but deprecated since MySQL 5.7.20 and was fully [removed](https://dev.mysql.com/doc/refman/5.7/en/query-cache.html) with MySQL 8.0.

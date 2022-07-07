@@ -8,7 +8,8 @@
             "args": [
                 "build",
                 "${workspaceFolder}/MySqlEntityCore.csproj",
-                "-c", "Debug",
+                "-c",
+                "Debug",
                 "/property:GenerateFullPaths=true"
             ],
             "problemMatcher": "$msCompile"
@@ -20,8 +21,22 @@
             "args": [
                 "build",
                 "${workspaceFolder}/MySqlEntityCore.csproj",
-                "-c", "Release",
+                "-c",
+                "Release",
                 "/property:GenerateFullPaths=true"
+            ],
+            "problemMatcher": "$msCompile"
+        },
+        {
+            "label": "Local NuGet Package",
+            "command": "dotnet",
+            "type": "process",
+            "args": [
+                "pack",
+                "-c",
+                "Release",
+                "-o",
+                "package",
             ],
             "problemMatcher": "$msCompile"
         }

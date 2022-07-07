@@ -219,5 +219,8 @@ namespace MySqlEntityCore.Template
             else
                 AttachedTransaction.NonQuery(query);
         }
+
+        //<summary>Return model data from DB information schema.</summary>
+        public TableInfo GetTableInfo() => Connection.InformationSchemaTables().Find(x => x.Name == this.Instance.Table);
     }
 }
