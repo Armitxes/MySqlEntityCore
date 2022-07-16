@@ -32,6 +32,9 @@ Calling the create method on an already created record will have no effect.
 
 ### Write
 To write, or update, existing records you must call the provided `Write` method.
+Access the `Origin` property of a record to retrieve original field values prior its modification.
+The `Origin` property will be updated once any unsubmitted changes are written into the database. 
+
 ```csharp
 User user = new User(1);
 user.Password = "54321"; // Please hash and salt PWs ;) 
