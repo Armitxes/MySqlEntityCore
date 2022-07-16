@@ -25,7 +25,14 @@ namespace MySqlEntityCore.Test
 
         public Contact(uint id) : base(id) { }
 
-        public static bool TestCreate()
+        public static void Test()
+        {
+            TestCreate();
+            TestWriteCached();
+            TestWriteUncached();
+        }
+
+        private static void TestCreate()
         {
             Contact contact = new Contact()
             {
@@ -33,17 +40,18 @@ namespace MySqlEntityCore.Test
                 Birthday = DateTime.Parse("1990-01-03 00:00:00"),
                 Income = 1000,
             };
-            Console.Write("[TEST] Creating simple default record with null values: ");
+            Console.WriteLine("[TEST] Creating simple default record with null values.");
             contact.Create();
 
-            bool success = contact.Id == 1;  // We are on a new DB with no records. Must be 1.
-            Console.WriteLine(success);
-            return success;
+            if (contact.Id != 1)  // We are on a new DB with no records. Must be 1.
+                throw new SystemException(
+                    "[TEST] Contact create test failed."
+                );
         }
 
-        public static bool TestWriteCached()
+        public static void TestWriteCached()
         {
-            Console.Write("[TEST] Write existing contact (cached): ");
+            Console.WriteLine("[TEST] Write existing contact (cached).");
             Contact contact = new Contact(1);
 
 
@@ -52,31 +60,32 @@ namespace MySqlEntityCore.Test
             contact.Income = 2000;
             contact.Write();
 
-            bool success = (
-                contact.Id == 1
-                && contact.EMail == "test2@domain.tld"
-                && contact.Birthday == DateTime.Parse("1990-01-04 00:00:00")
-                && contact.Income == 2000
-            );
-            Console.WriteLine(success);
-            return success;
+            if (
+                contact.Id != 1
+                || contact.EMail != "test2@domain.tld"
+                || contact.Birthday != DateTime.Parse("1990-01-04 00:00:00")
+                || contact.Income != 2000
+            )
+                throw new SystemException(
+                    "[TEST] Writing contact retrieved from cache failed."
+                );
         }
 
-        public static bool TestWriteUncached()
+        public static void TestWriteUncached()
         {
             Console.Write("[TEST] Write existing contact (uncached): ");
             Cache.Remove("Contact.1");
             Contact contact = new Contact(1);
 
-            bool success = (
-                contact.Id == 1
-                && contact.EMail == "test2@domain.tld"
-                && contact.Birthday == DateTime.Parse("1990-01-04 00:00:00")
-                && contact.Income == 2000
-            );
-            Console.WriteLine(success);
-
-            return success;
+            if (
+                contact.Id != 1
+                || contact.EMail != "test2@domain.tld"
+                || contact.Birthday != DateTime.Parse("1990-01-04 00:00:00")
+                || contact.Income != 2000
+            )
+                throw new SystemException(
+                    "[TEST] Inconsistent cache after writing contact to DB."
+                );
         }
 
     }

@@ -8,10 +8,10 @@
   * [Data Query (DQL)](actions/data-query.md)
   * [Data Manipulation (DML)](actions/data-manipulation.md)
   * [Transaction Control (TCL)](actions/transaction-control.md)
+  * [Stored routines](actions/stored-routines.md)
 * Performance
   * [Caching](performance/caching.md)
   * [Pooling](performance/pooling.md)
-  * [Stored routines](performance/stored-routines.md)
 * Relations
   * [one2one](relations/one2one.md)
   * [one2many](relations/one2many.md)

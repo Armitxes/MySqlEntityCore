@@ -23,3 +23,8 @@ RecordPage<User>(
   - Total offset from first record.
 - `List<T> Records`
   - Record list of the current page.
+
+---
+
+**NOTES**:
+- Pages always start counting from 1. Requesting page 0 or below will trigger a fallback returning page 1.
