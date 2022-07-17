@@ -38,6 +38,9 @@ namespace MySqlEntityCore.Test
         private static void TestTableInfo()
         {
             Console.WriteLine("[TEST] User table info.");
+            new User().GetTableInfo();
+
+            Console.WriteLine("[TEST] All DB table info.");
             TableInfo.Get("mysqlentitycore");
         }
 
