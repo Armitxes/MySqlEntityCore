@@ -9,6 +9,7 @@
   * [Data Manipulation (DML)](actions/data-manipulation.md)
   * [Transaction Control (TCL)](actions/transaction-control.md)
   * [Stored routines](actions/stored-routines.md)
+* Events
 * Performance
   * [Caching](performance/caching.md)
   * [Pooling](performance/pooling.md)

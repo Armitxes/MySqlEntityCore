@@ -48,7 +48,7 @@ namespace MySqlEntityCore.Test
 
             if (page.Records[0].Id != 1)
                 throw new SystemException(
-                    $"[TEST] RecordPage TestFirstPage: Wrong first ID ({page.Records[0].Id}) entry. Default sorting messed up?"
+                    $"[TEST] RecordPage TestFirstPage: Wrong first ID ({page.Records[0].Id}) entry. Default order messed up?"
                 );
 
             if (page.Number != 1)
