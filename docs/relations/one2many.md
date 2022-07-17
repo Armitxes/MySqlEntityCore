@@ -26,12 +26,12 @@ corporate.Name = "Inquisitor Inc.";
 corporate.Create();
 
 Company subsidiaryCompany = new Company(); 
-subsidiaryCompany.ParentCompany = corporate.Id;
+subsidiaryCompany.ParentCompany = corporate;
 subsidiaryCompany.Name = "SubInquisitor Ltd.";
 subsidiaryCompany.Create();
 
 Company subsidiaryCompany2 = new Company(); 
-subsidiaryCompany2.ParentCompany = corporate.Id;
+subsidiaryCompany2.ParentCompany = corporate;
 subsidiaryCompany2.Name = "SubInquisitor GbR.";
 subsidiaryCompany2.Create();
 
