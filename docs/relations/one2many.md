@@ -2,7 +2,7 @@
 
 # One2many
 In a one2many relation one record has zero or more related records in another model.
-By creating a one2many relationship your autmatically create a many2one relationship and vice versa.
+Every one2many relationship has a many2one relationship as counterpart.
 
 
 For example, one company can own many other companies.
