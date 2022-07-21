@@ -41,6 +41,17 @@ user.Password = "54321"; // Please hash and salt PWs ;)
 user.Write();
 ```
 
+### Revert
+Calling the buildin `Revert` method reverts any uncommited changes of the record.
+```csharp
+User user = new User(1);
+Console.WriteLine(this.Username); // Outputs "User1"
+this.Username = "Dummy";
+Console.WriteLine(this.Username); // Outputs "Dummy"
+user.Revert();
+Console.WriteLine(this.Username); // Outputs "User1"
+```
+
 ### Delete
 Simply call the provided `Delete` method to delete the record.
 ```csharp

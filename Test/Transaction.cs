@@ -6,13 +6,14 @@ namespace MySqlEntityCore.Test
     {
         public static void Test()
         {
-            Console.WriteLine("[TEST] Testing transactions.");
+            Console.WriteLine("[TEST] [TCL] Testing Transactions.");
             TestIsolation();
             TestCommit();
         }
 
         private static void TestIsolation()
         {
+            Console.WriteLine("[TEST] [TCL] Transaction - Test isolation.");
             // Create user isolated within transaction. Must have ID 2
             User isolatedUser = new User();
             isolatedUser.AttachedTransaction = new MySqlEntityCore.Transaction();
@@ -42,6 +43,7 @@ namespace MySqlEntityCore.Test
 
         private static void TestCommit()
         {
+            Console.WriteLine("[TEST] [TCL] Transaction - Test commit.");
             User user = User.Get<User>(1, new MySqlEntityCore.Transaction());
             user.Username = "Commited";
             user.Write();
