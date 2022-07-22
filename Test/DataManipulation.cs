@@ -16,6 +16,7 @@ namespace MySqlEntityCore.Test
             TestCreate();
             TestWrite();
             TestRevert();
+            TestDelete();
         }
 
         public static void TestCreate()
@@ -68,6 +69,19 @@ namespace MySqlEntityCore.Test
             if (dM.Name != "Name")
                 throw new SystemException(
                     $"[TEST] [DML] Revert test failed. Wrong value."
+                );
+        }
+
+        public static void TestDelete()
+        {
+            Console.WriteLine("[TEST] [DML] Delete - Record deletion.");
+            DataManipulation dM = new DataManipulation(1);
+            dM.Delete();
+
+            dM = new DataManipulation(1);
+            if (dM.Name != null)
+                throw new SystemException(
+                    $"[TEST] [DML] Deletion failed. Record still exists."
                 );
         }
     }
