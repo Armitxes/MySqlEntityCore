@@ -2,7 +2,7 @@
 
 # One2many
 In a one2many relation one record has zero or more related records in another model.
-By creating a one2many relationship your autmatically create a many2one relationship and vice versa.
+Every one2many relationship has a many2one relationship as counterpart.
 
 
 For example, one company can own many other companies.
@@ -26,12 +26,12 @@ corporate.Name = "Inquisitor Inc.";
 corporate.Create();
 
 Company subsidiaryCompany = new Company(); 
-subsidiaryCompany.ParentCompany = corporate.Id;
+subsidiaryCompany.ParentCompany = corporate;
 subsidiaryCompany.Name = "SubInquisitor Ltd.";
 subsidiaryCompany.Create();
 
 Company subsidiaryCompany2 = new Company(); 
-subsidiaryCompany2.ParentCompany = corporate.Id;
+subsidiaryCompany2.ParentCompany = corporate;
 subsidiaryCompany2.Name = "SubInquisitor GbR.";
 subsidiaryCompany2.Create();
 

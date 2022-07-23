@@ -8,12 +8,12 @@ namespace MySqlEntityCore.Test
         public void Start()
         {
             InitEntityCore();
-            Test.DataType.Test();
-            Test.Contact.TestCreate();
-            Test.Contact.TestWriteCached();
-            Test.Contact.TestWriteUncached();
-            Test.User.Test();
-            Test.Transaction.Test();
+            DataType.Test();
+            Contact.Test();
+            DataQuery.Test();
+            DataManipulation.Test();
+            Transaction.Test();
+            RecordPages.Test();
         }
 
         private void InitEntityCore()

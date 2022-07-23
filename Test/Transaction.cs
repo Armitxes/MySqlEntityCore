@@ -2,63 +2,74 @@ using System;
 
 namespace MySqlEntityCore.Test
 {
-    public class Transaction
+    [Model]
+    public class Transaction : MySqlEntityCore.Template.DefaultModel
     {
+        [Field(Size = 45, Unique = true, Required = true)]
+        public string Name { get; set; }
+
+        public Transaction() : base() { }
+        public Transaction(uint id) : base(id) { }
+
         public static void Test()
         {
-            Console.WriteLine("[TEST] Testing transactions.");
+            Console.WriteLine("[TEST] [TCL] Testing Transactions.");
             TestIsolation();
             TestCommit();
         }
 
         private static void TestIsolation()
         {
+            Console.WriteLine("[TEST] [TCL] Transaction - Test isolation.");
             // Create user isolated within transaction. Must have ID 2
-            User isolatedUser = new User();
-            isolatedUser.AttachedTransaction = new MySqlEntityCore.Transaction();
-            isolatedUser.Username = "Transaction User";
-            isolatedUser.Password = "111";
-            isolatedUser.Create();
+            Transaction isolated = new Transaction();
+            isolated.AttachedTransaction = new MySqlEntityCore.Transaction();
+            isolated.Name = "Transaction";
+            isolated.Create();
 
-            if (isolatedUser.Id != 2)
+            if (isolated.Id != 1)
                 throw new SystemException(
-                    $"[TEST] TestIsolation failed. User ID {isolatedUser.Id} != 2"
+                    $"[TEST] [TCL] Isolation failed. User ID {isolated.Id} != 1"
                 );
 
-            User user = new User(2); // Outside transaction, user should not be found.
-            if (user.Username != null)
+            Transaction transaction = new Transaction(1); // Outside transaction, user should not be found.
+            if (transaction.Name != null)
                 throw new SystemException(
-                    $"[TEST] TestIsolation failed. Transaction not isolated."
+                    $"[TEST] [TCL] Isolation failed. Transaction not isolated."
                 );
 
             // Inside transaction, user should be found.
-            user = User.Get<User>(2, isolatedUser.AttachedTransaction);
-            if (user.Username != isolatedUser.Username)
+            transaction = Transaction.Get<Transaction>(1, isolated.AttachedTransaction);
+            if (transaction.Name != isolated.Name)
                 throw new SystemException(
-                    $"[TEST] TestIsolation failed. Transaction data lost."
+                    $"[TEST] [TCL] Isolation failed. Transaction data lost."
                 );
-            isolatedUser.AttachedTransaction.Rollback();
+            isolated.AttachedTransaction.Rollback();
         }
 
         private static void TestCommit()
         {
-            User user = User.Get<User>(1, new MySqlEntityCore.Transaction());
-            user.Username = "Commited";
-            user.Write();
+            Console.WriteLine("[TEST] [TCL] Transaction - Test commit.");
+            Transaction unisolated = new Transaction();
+            unisolated.Name = "Transaction";
+            unisolated.Create();
 
-            User Unisolated = new User(1);
-            if (user.Username == Unisolated.Username)
+            Transaction isolated = Transaction.Get<Transaction>(2, new MySqlEntityCore.Transaction());
+            isolated.Name = "Commited";
+            isolated.Write();
+
+            if (isolated.Name == unisolated.Name)
                 throw new SystemException(
-                    $"[TEST] TestCommit failed. Transaction does not await commit on write."
+                    $"[TEST] [TCL] TestCommit failed. Transaction does not await commit on write."
                 );
 
-            Cache.Remove("User.1");
-            user.AttachedTransaction.Commit();
+            Cache.Remove("User.2");
+            isolated.AttachedTransaction.Commit();
 
-            Unisolated = new User(1);
-            if (user.Username != Unisolated.Username)
+            unisolated = new Transaction(2);
+            if (isolated.Name != unisolated.Name)
                 throw new SystemException(
-                    $"[TEST] TestCommit failed. Commit not applied."
+                    $"[TEST] [TCL] TestCommit failed. Commit not applied."
                 );
         }
     }
