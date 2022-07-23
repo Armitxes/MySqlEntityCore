@@ -73,7 +73,7 @@ namespace MySqlEntityCore.Test
 
         public static void TestWriteUncached()
         {
-            Console.Write("[TEST] Write existing contact (uncached): ");
+            Console.WriteLine("[TEST] Write existing contact (uncached).");
             Cache.Remove("Contact.1");
             Contact contact = new Contact(1);
 

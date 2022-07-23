@@ -10,7 +10,7 @@ namespace MySqlEntityCore.Test
 
         public static void Test()
         {
-            Console.WriteLine("[TEST] Testing RecordPage.");
+            Console.WriteLine("[TEST] [RecordPage] Tests.");
             Prepare();
             TestFirstPage();
             TestLastPage();
@@ -18,7 +18,7 @@ namespace MySqlEntityCore.Test
 
         private static void Prepare()
         {
-            Console.WriteLine("[TEST] Preparing data for RecordPage tests.");
+            Console.WriteLine("[TEST] [RecordPage] Preparing data for tests.");
             for (uint i = 0; i < TotalRecords; i++)
             {
                 RecordPageEntry recPage = new RecordPageEntry();
@@ -27,14 +27,14 @@ namespace MySqlEntityCore.Test
 
                 if (recPage.Id == 0)
                     throw new SystemException(
-                        $"[TEST] Failed to prepare RecordPage data at index {i}."
+                        $"[TEST] [RecordPage] Failed to prepare RecordPage data at index {i}."
                     );
             }
         }
 
         private static void TestFirstPage()
         {
-            Console.WriteLine("[TEST] RecordPage: Checking first page.");
+            Console.WriteLine("[TEST] [RecordPage] Checking first page.");
 
             RecordPage<RecordPageEntry> page = new RecordPage<RecordPageEntry>(
                 pageNumber: 0,  // Page 0 === Page 1
@@ -43,28 +43,28 @@ namespace MySqlEntityCore.Test
 
             if (page.Records.Count != RecordLimitPerPage)
                 throw new SystemException(
-                    $"[TEST] RecordPage TestFirstPage: Wrong record amount ({page.Records.Count} != {RecordLimitPerPage})."
+                    $"[TEST] [RecordPage] TestFirstPage: Wrong record amount ({page.Records.Count} != {RecordLimitPerPage})."
                 );
 
             if (page.Records[0].Id != 1)
                 throw new SystemException(
-                    $"[TEST] RecordPage TestFirstPage: Wrong first ID ({page.Records[0].Id}) entry. Default order messed up?"
+                    $"[TEST] [RecordPage] TestFirstPage: Wrong first ID ({page.Records[0].Id}) entry. Default order messed up?"
                 );
 
             if (page.Number != 1)
                 throw new SystemException(
-                    $"[TEST] RecordPage TestFirstPage: FirstPage Number is not 1"
+                    $"[TEST] [RecordPage] TestFirstPage: FirstPage Number is not 1"
                 );
 
             if (page.Offset != 0)
                 throw new SystemException(
-                    $"[TEST] RecordPage TestFirstPage: Offset property unequal 0"
+                    $"[TEST] [RecordPage] TestFirstPage: Offset property unequal 0"
                 );
         }
 
         private static void TestLastPage()
         {
-            Console.WriteLine("[TEST] RecordPage: Checking last page.");
+            Console.WriteLine("[TEST] [RecordPage] Checking last page.");
             decimal difference = TotalRecords / RecordLimitPerPage;
             uint lastPage = (uint)Math.Ceiling(difference);
 
@@ -78,12 +78,12 @@ namespace MySqlEntityCore.Test
 
             if (!lastPageFilled && page.Records.Count == RecordLimitPerPage)
                 throw new SystemException(
-                    $"[TEST] RecordPage TestLastPage: Last page contains too many records."
+                    $"[TEST] [RecordPage] TestLastPage: Last page contains too many records."
                 );
 
             if (lastPageFilled && page.Records.Count != RecordLimitPerPage)
                 throw new SystemException(
-                    $"[TEST] RecordPage TestLastPage: Last page is missing records."
+                    $"[TEST] [RecordPage] TestLastPage: Last page is missing records."
                 );
         }
     }

@@ -10,7 +10,7 @@ namespace MySqlEntityCore.Test
             InitEntityCore();
             DataType.Test();
             Contact.Test();
-            User.Test();
+            DataQuery.Test();
             DataManipulation.Test();
             Transaction.Test();
             RecordPages.Test();
