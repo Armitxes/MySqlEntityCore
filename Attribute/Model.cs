@@ -159,13 +159,14 @@ namespace MySqlEntityCore
 
             foreach (FieldAttribute mC in modelConstraints)
             {
-                if (cNames.Contains(mC.Column))
+                string fkName = $"FK_{Table}__{mC.Column}";
+                if (cNames.Contains(mC.Column) || cNames.Contains(fkName))
                     continue;
 
                 ModelAttribute refModel = ModelAttribute.Get(mC.PropInfo.PropertyType);
                 sql.Add(
                     "ADD CONSTRAINT " +
-                    $"`FK_{Table}__{mC.Column}` FOREIGN KEY (`{mC.Column}`) " +
+                    $"`{fkName}` FOREIGN KEY (`{mC.Column}`) " +
                     $"REFERENCES `{refModel.Table}` (`Id`)"
                 );
             }
